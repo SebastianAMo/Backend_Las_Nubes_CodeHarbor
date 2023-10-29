@@ -1,11 +1,11 @@
 const router = require('express').Router();
 
-const pacientesRouter = require('./pacientes');
-const adminRouter = require('./admin');
-const medicamentosRouter = require('./medicamentos');
-const chatbotRouter = require('./chatbot');
-const colaboradoresRouter = require('./colaboradores');
-const citasRouter = require('./citas');
+const pacientesRouter = require('./pacientes.router');
+const adminRouter = require('./admin.router');
+const medicamentosRouter = require('./medicamentos.router');
+const chatbotRouter = require('./chatbot.router');
+const colaboradoresRouter = require('./colaboradores.router');
+const citasRouter = require('./citas.router');
 
 const loadEndpoints = (app) => {
     app.use('/api', router);
