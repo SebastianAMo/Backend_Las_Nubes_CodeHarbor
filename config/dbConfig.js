@@ -5,8 +5,8 @@ const pool = new Pool({
   host: 'localhost',
   port: 5432,
   database: 'BD_Las_Nubes',
-  user: 'admin',
-  password: 'admin'
+  user: 'test',
+  password: 'test'
 });
 
 pool.connect((err) => {

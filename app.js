@@ -4,6 +4,7 @@ const cors = require('cors');
 const { config } = require("./config/envConfig");
 const { db } = require("./config/dbConfig")
 
+const loadEndpoints = require('./src/routes');
 
 const app = express();
 
