@@ -3,6 +3,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../../config/dbConfig')
+const { config }= require('../../config/envConfig')
 const router = express.Router();
 
 
@@ -26,7 +27,7 @@ router.post('/login', async (req, res) => {
       },
     };
 
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+    jwt.sign(payload, config.jwt_secret, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
       res.json({ token });
     });
@@ -43,7 +44,7 @@ router.post('/logout', async (req, res) => {
     if (!bearerHeader) return res.status(401).json({ msg: 'No token, authorization denied' });
 
     const token = bearerHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, config.jwt_secret);
 
     const expiryDate = new Date(decoded.exp * 1000);
     await pool.query('INSERT INTO blacklisted_tokens (token, expiry_date) VALUES ($1, $2)', [token, expiryDate]);

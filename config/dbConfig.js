@@ -1,12 +1,12 @@
 const { Pool } = require('pg');
-require('dotenv').config();
+const { config } = require('./envConfig');
 
 const pool = new Pool({
-  host: 'localhost',
-  port: 5432,
-  database: 'BD_Las_Nubes',
-  user: 'test',
-  password: 'test'
+  host: config.db.host,
+  port: config.db.port,
+  database: config.db.database,
+  user: config.db.user,
+  password: config.db.password,
 });
 
 pool.connect((err) => {
