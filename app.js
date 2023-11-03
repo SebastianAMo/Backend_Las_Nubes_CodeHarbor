@@ -17,6 +17,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
+loadEndpoints(app);
+
 app.set('port', config.port);
 
 app.listen(app.get('port'), () => {
