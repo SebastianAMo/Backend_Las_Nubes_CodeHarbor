@@ -1,5 +1,5 @@
 CREATE TABLE "users" (
-  "id" integer PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "username" varchar,
   "password" varchar,
   "role" varchar,
@@ -8,7 +8,7 @@ CREATE TABLE "users" (
 );
 
 CREATE TABLE "colaboradores" (
-  "id" integer PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "tipo_identificacion" varchar,
   "numero_identificacion" integer UNIQUE,
   "nombre" varchar,
@@ -27,7 +27,7 @@ CREATE TABLE "colaboradores" (
 );
 
 CREATE TABLE "pacientes" (
-  "id" integer PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "tipo_identificacion" varchar,
   "numero_identificacion" integer UNIQUE,
   "nombre" varchar,
@@ -42,7 +42,7 @@ CREATE TABLE "pacientes" (
 );
 
 CREATE TABLE "medicamentos" (
-  "id" integer PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "denominacion" varchar,
   "proveedor" varchar,
   "lote" varchar,
@@ -57,7 +57,7 @@ CREATE TABLE "medicamentos" (
 );
 
 CREATE TABLE "formulas_medicas" (
-  "id" integer PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "id_paciente" integer,
   "id_colaborador" integer,
   "fecha_generacion" timestamp,
@@ -65,7 +65,7 @@ CREATE TABLE "formulas_medicas" (
 );
 
 CREATE TABLE "medicamentos_recetados" (
-  "id" integer PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "id_formula_medica" integer,
   "medicamento_id" integer,
   "cantidad" integer,
@@ -73,7 +73,7 @@ CREATE TABLE "medicamentos_recetados" (
 );
 
 CREATE TABLE "citas_medicas" (
-  "id_cita" integer PRIMARY KEY,
+  "id_cita" SERIAL PRIMARY KEY,
   "fecha" date,
   "hora" time,
   "colaborador_id" integer,
@@ -82,14 +82,14 @@ CREATE TABLE "citas_medicas" (
 );
 
 CREATE TABLE "entrada_pacientes" (
-  "id" integer PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "id_paciente" integer,
   "hora_entrada" timestamp,
   "secretario_id" integer
 );
 
 CREATE TABLE "historias_clinicas" (
-  "id_Historia" integer PRIMARY KEY,
+  "id_Historia" SERIAL PRIMARY KEY,
   "id_Colaborador" integer,
   "id_Paciente" integer,
   "antecedentes_personales" text,
@@ -102,9 +102,17 @@ CREATE TABLE "historias_clinicas" (
 );
 
 CREATE TABLE "solicitudes" (
-  "id" integer PRIMARY KEY,
+  "id" SERIAL PRIMARY KEY,
   "fecha_solicitud" date,
   "id_medicamento_recetado" integer
+);
+
+
+-- Crear la tabla para almacenar los tokens en la lista negra
+CREATE TABLE IF NOT EXISTS blacklisted_tokens (
+  id SERIAL PRIMARY KEY,
+  token VARCHAR(500) NOT NULL,
+  expiry_date TIMESTAMP NOT NULL
 );
 
 COMMENT ON TABLE "users" IS 'Almacena información de los usuarios del sistema';
