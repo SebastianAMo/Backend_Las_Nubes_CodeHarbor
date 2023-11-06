@@ -56,3 +56,21 @@ npm start
 ```
 
 El servidor debería estar corriendo en <http://localhost:3000>
+
+## Explicacion
+
+### Routes
+
+Los archivos de las rutas hacen referencia a cada modulo y los endpoints que tiene estan relacionados a ese modulo.
+
+- Módulo para la administración del personal -> admin.router.js
+
+- Módulo para registro de cada paciente -> pacientes.router.js
+
+- Módulo para la gestión de medicamentos -> medicamentos.router.js
+
+- Módulo para citas médicas -> citas.router.js
+
+- Módulo de colaboradores -> colaboradores.router.js
+
+- Módulo extra -> chatbot.router.js
