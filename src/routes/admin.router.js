@@ -1,27 +1,12 @@
 const router = require('express').Router();
+const { getAllColaboradores,getColaboradorByNumId, addColaborador, updateColaborador, deleteColaborador, patchColaborador} = require('../controllers/admin.controller');
 
-router.post('/colaboradores', (req, res) => { 
-    res.send('Colaboradores POST');  
-});
+router.get('/colaboradores/', getAllColaboradores);
+router.get('/colaboradores/:numero_identificacion', getColaboradorByNumId);
+router.post('/colaboradores/', addColaborador);
+router.put('/colaboradores/', updateColaborador);
+router.delete('/colaboradores/:numero_identificacion', deleteColaborador);
+router.patch('/colaboradores/:numero_identificacion', patchColaborador);
 
-router.get('/colaboradores', (req, res) => {
-    res.send('Colaboradores GET');
-});
-
-router.get('/colaboradores/:id', (req, res) => {
-    res.send('Colaboradores GET by ID');
-});
-
-router.put('/colaboradores', (req, res) => {
-    res.send('Colaboradores PUT');
-});
-
-router.delete('/colaboradores/:id', (req, res) => {
-    res.send('Colaboradores DELETE');
-});
-
-router.get('/colaboradores/search', (req, res) => {
-    res.send('Colaboradores SEARCH');
-});
 
 module.exports = router;
