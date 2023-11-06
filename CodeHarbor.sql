@@ -39,7 +39,29 @@ CREATE TABLE "pacientes" (
   "telefono" varchar,
   "correo_electronico" varchar UNIQUE,
   "usuario_id" integer
+  "updated_at" TIMESTAMP,
+  "is_deleted" BOOLEAN DEFAULT FALSE,
+  "deleted_at" TIMESTAMP
 );
+
+CREATE TABLE "pacientes" (
+  "id" SERIAL PRIMARY KEY,
+  "tipo_identificacion" varchar,
+  "numero_identificacion" integer UNIQUE,
+  "nombre" varchar,
+  "apellido" varchar,
+  "fecha_nacimiento" date,
+  "estado_civil" varchar,
+  "sexo" varchar,
+  "direccion" varchar,
+  "telefono" varchar,
+  "correo_electronico" varchar UNIQUE,
+  "usuario_id" integer
+  "updated_at" TIMESTAMP,
+  "is_deleted" BOOLEAN DEFAULT FALSE,
+  "deleted_at" TIMESTAMP
+);
+
 
 CREATE TABLE "medicamentos" (
   "id" SERIAL PRIMARY KEY,
