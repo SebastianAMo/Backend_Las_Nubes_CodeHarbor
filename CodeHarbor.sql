@@ -23,22 +23,7 @@ CREATE TABLE "colaboradores" (
   "fecha_ingreso" date,
   "jerarquia" varchar,
   "especialidad" varchar,
-  "usuario_id" integer
-);
-
-CREATE TABLE "pacientes" (
-  "id" SERIAL PRIMARY KEY,
-  "tipo_identificacion" varchar,
-  "numero_identificacion" integer UNIQUE,
-  "nombre" varchar,
-  "apellido" varchar,
-  "fecha_nacimiento" date,
-  "estado_civil" varchar,
-  "sexo" varchar,
-  "direccion" varchar,
-  "telefono" varchar,
-  "correo_electronico" varchar UNIQUE,
-  "usuario_id" integer
+  "usuario_id" integer,
   "updated_at" TIMESTAMP,
   "is_deleted" BOOLEAN DEFAULT FALSE,
   "deleted_at" TIMESTAMP
@@ -56,11 +41,13 @@ CREATE TABLE "pacientes" (
   "direccion" varchar,
   "telefono" varchar,
   "correo_electronico" varchar UNIQUE,
-  "usuario_id" integer
+  "usuario_id" integer,
   "updated_at" TIMESTAMP,
   "is_deleted" BOOLEAN DEFAULT FALSE,
   "deleted_at" TIMESTAMP
 );
+
+
 
 
 CREATE TABLE "medicamentos" (
@@ -136,6 +123,7 @@ CREATE TABLE IF NOT EXISTS blacklisted_tokens (
   token VARCHAR(500) NOT NULL,
   expiry_date TIMESTAMP NOT NULL
 );
+
 
 COMMENT ON TABLE "users" IS 'Almacena información de los usuarios del sistema';
 
