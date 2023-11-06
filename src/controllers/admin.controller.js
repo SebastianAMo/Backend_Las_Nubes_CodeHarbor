@@ -1,4 +1,3 @@
-const e = require('express');
 const pool = require('../../config/dbConfig');
 
 const addColaborador = async (req, res) => {
