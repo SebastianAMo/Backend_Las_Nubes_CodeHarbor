@@ -6,6 +6,8 @@ const pool = require('../../config/dbConfig')
 const { config }= require('../../config/envConfig')
 const router = express.Router();
 
+const authenticate = require('../middlewares/auth');
+
 
 // @route   POST api/auth/login
 // @desc    Authenticate user & get token
@@ -38,7 +40,7 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.post('/logout', async (req, res) => {
+router.post('/logout' ,authenticate,async (req, res) => {
   try {
     const bearerHeader = req.header('Authorization');
     if (!bearerHeader) return res.status(401).json({ msg: 'No token, authorization denied' });
