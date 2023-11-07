@@ -39,6 +39,15 @@ const getPacienteByNumId = async (req, res) => {
   }
 }
 
+const getDeletedPacientes = async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM pacientes WHERE is_deleted = TRUE');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+}
+
 const updatePaciente = async (req, res) => {
   try {
     const { id, tipo_identificacion, numero_identificacion, nombre, apellido, fecha_nacimiento, estado_civil, sexo, direccion, telefono, correo_electronico, usuario_id } = req.body;
@@ -46,7 +55,7 @@ const updatePaciente = async (req, res) => {
     const result = await pool.query(
       `UPDATE pacientes 
       SET tipo_identificacion = $1, numero_identificacion = $2, nombre = $3, apellido = $4, fecha_nacimiento = $5, estado_civil = $6, sexo = $7, direccion = $8, telefono = $9, correo_electronico = $10, usuario_id = $11, updated_at = $13
-      WHERE id = $12 AND is_deleted = FALSE
+      WHERE id = $12
       RETURNING *`,
       [tipo_identificacion, numero_identificacion, nombre, apellido, fecha_nacimiento, estado_civil, sexo, direccion, telefono, correo_electronico, usuario_id, id, updateTimestamp]
     );
@@ -88,6 +97,7 @@ module.exports = {
   addPaciente,
   getAllPacientes,
   getPacienteByNumId,
+  getDeletedPacientes,
   updatePaciente,
   deletePaciente,
   patchPaciente
