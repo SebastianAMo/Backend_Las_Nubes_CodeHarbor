@@ -46,13 +46,23 @@ const getAllColaboradores = async (req, res) => {
 const getColaboradorByNumId = async (req, res) => {
   try {
     const { numero_identificacion } = req.params;
-    const result = await pool.query('SELECT * FROM colaboradores WHERE numero_identificacion = $1 AND is_deleted = FALSE', [numero_identificacion]);
+    const result = await pool.query('SELECT * FROM colaboradores WHERE numero_identificacion = $1', [numero_identificacion]);
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
-  
+
+const getDeletedColaboradores = async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM colaboradores WHERE is_deleted = true');
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send(err.message);
+  }
+}
+
 const updateColaborador = async (req, res) => {
   try {
     const { id, tipo_identificacion, numero_identificacion, nombre, apellido, fecha_nacimiento, estado_civil, sexo, direccion, telefono, correo_electronico, salario, fecha_ingreso, jerarquia, especialidad, usuario_id } = req.body;
@@ -69,8 +79,7 @@ const updateColaborador = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
-
-// Pensar en boorrado logico  
+ 
 const deleteColaborador = async (req, res) => {
   try {
     const { numero_identificacion } = req.params;
@@ -102,8 +111,9 @@ const patchColaborador = async (req, res) => {
 module.exports = {
     getAllColaboradores,
     getColaboradorByNumId,
+    getDeletedColaboradores,
     addColaborador,
     updateColaborador,
     deleteColaborador,
-    patchColaborador 
+    patchColaborador,
 };
