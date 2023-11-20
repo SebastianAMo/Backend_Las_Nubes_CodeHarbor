@@ -1,28 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const {addPaciente,getAllPacientes,getPacienteByNumId,updatePaciente,deletePaciente,patchPaciente} = require('../controllers/pacientes.controller');
 
-router.post('/pacientes', (req, res) => {
-    res.send('Endpoint para crear un nuevo paciente');
-});
+router.post('/pacientes', addPaciente);
 
-router.get('/pacientes', (req, res) => {
-    res.send('Endpoint para consultar todos los pacientes');
-});
+router.get('/pacientes', getAllPacientes);
 
-router.get('/pacientes/:id', (req, res) => {
-    res.send(`Endpoint para consultar el paciente con ID ${req.params.id}`);
-});
+router.get('/pacientes/:numero_identificacion', getPacienteByNumId);
 
-router.put('/pacientes/:id', (req, res) => {
-    res.send(`Endpoint para actualizar el paciente con ID ${req.params.id}`);
-});
+router.put('/pacientes/:numero_identificacion', updatePaciente);
 
-router.delete('/pacientes/:id', (req, res) => {
-    res.send(`Endpoint para borrar el paciente con ID ${req.params.id}`);
-});
+router.delete('/pacientes/:numero_identificacion', deletePaciente);
 
-router.get('/pacientes/search', (req, res) => {
-    res.send('Endpoint para buscar y filtrar pacientes por criterios');
-});
+router.patch('/pacientes/:numero_identificacion', patchPaciente);
 
 module.exports = router;
