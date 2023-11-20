@@ -10,7 +10,8 @@ const addPaciente = async (req, res) => {
         // Lógica para la creación de usuario asociado, si es necesario
         const userCreationResponse = await userController.createUser({
             username: pacienteData.numero_identificacion,
-            password: pacienteData.numero_identificacion // Considera utilizar una lógica más segura para contraseñas
+            password: pacienteData.numero_identificacion,
+            role: 'paciente'
         });
 
         if (!userCreationResponse.success) {
