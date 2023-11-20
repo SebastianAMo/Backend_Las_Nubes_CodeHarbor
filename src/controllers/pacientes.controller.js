@@ -54,15 +54,6 @@ const getDeletedPacientes = async (req, res) => {
     }
 };
 
-const updatePaciente = async (req, res) => {
-    try {
-        const pacienteData = req.body;
-        const paciente = await pacienteModel.updatePaciente(pacienteData);
-        res.json(paciente);
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-};
 
 const deletePaciente = async (req, res) => {
     try {
@@ -74,7 +65,7 @@ const deletePaciente = async (req, res) => {
     }
 };
 
-const patchPaciente = async (req, res) => {
+const updatePaciente = async (req, res) => {
     try {
         const { id } = req.params;
         const updateFields = req.body;
@@ -91,6 +82,5 @@ module.exports = {
     getPacienteByNumId,
     getDeletedPacientes,
     updatePaciente,
-    deletePaciente,
-    patchPaciente
+    deletePaciente
 };

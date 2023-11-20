@@ -27,23 +27,11 @@ const getDeletedPacientes = async () => {
     return result.rows;
 };
 
-const updatePaciente = async (pacienteData) => {
-    pacienteData.updateTimestamp = new Date();
-    const result = await pool.query(
-        `UPDATE pacientes 
-        SET tipo_identificacion = $1, numero_identificacion = $2, nombre = $3, apellido = $4, fecha_nacimiento = $5, estado_civil = $6, sexo = $7, direccion = $8, telefono = $9, correo_electronico = $10, usuario_id = $11, updated_at = $12
-        WHERE id = $13
-        RETURNING *`,
-        [pacienteData.tipo_identificacion, pacienteData.numero_identificacion, pacienteData.nombre, pacienteData.apellido, pacienteData.fecha_nacimiento, pacienteData.estado_civil, pacienteData.sexo, pacienteData.direccion, pacienteData.telefono, pacienteData.correo_electronico, pacienteData.usuario_id, pacienteData.updateTimestamp, pacienteData.id]
-    );
-    return result.rows[0];
-};
-
 const deletePaciente = async (id) => {
     await pool.query('UPDATE pacientes SET is_deleted = TRUE, deleted_at = $2 WHERE id = $1', [id, new Date()]);
 };
 
-const patchPaciente = async (id, updateFields) => {
+const updatePaciente = async (id, updateFields) => {
     const keys = Object.keys(updateFields);
     const values = keys.map(key => updateFields[key]);
     const setString = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
@@ -57,7 +45,6 @@ module.exports = {
     getAllPacientes,
     getPacienteByNumId,
     getDeletedPacientes,
-    updatePaciente,
     deletePaciente,
-    patchPaciente
+    updatePaciente
 };

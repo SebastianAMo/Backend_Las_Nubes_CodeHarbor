@@ -46,17 +46,6 @@ const getColaboradorByNumId = async (req, res) => {
   }
 };
 
-const updateColaborador = async (req, res) => {
-  try {
-      const colaboradorData = req.body;
-      colaboradorData.updateTimestamp = new Date();
-      const colaborador = await adminModel.updateColaborador(colaboradorData);
-      res.json(colaborador);
-  } catch (err) {
-      res.status(500).send(err.message);
-  }
-};
-
 const deleteColaborador = async (req, res) => {
   try {
       const { numero_identificacion } = req.params;
@@ -67,7 +56,7 @@ const deleteColaborador = async (req, res) => {
   }
 };
 
-const patchColaborador = async (req, res) => {
+const updateColaborador = async (req, res) => {
   try {
       const { numero_identificacion } = req.params;
       const updateFields = req.body;
@@ -83,6 +72,5 @@ module.exports = {
   getAllColaboradores,
   getColaboradorByNumId,
   updateColaborador,
-  deleteColaborador,
-  patchColaborador,
+  deleteColaborador
 };

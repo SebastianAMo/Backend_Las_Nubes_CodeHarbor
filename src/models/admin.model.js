@@ -27,22 +27,11 @@ const getDeletedColaboradores = async () => {
     return result.rows;
 };
 
-const updateColaborador = async (colaboradorData) => {
-    const result = await pool.query(
-        `UPDATE colaboradores 
-        SET tipo_identificacion = $1, numero_identificacion = $2, nombre = $3, apellido = $4, fecha_nacimiento = $5, estado_civil = $6, sexo = $7, direccion = $8, telefono = $9, correo_electronico = $10, salario = $11, fecha_ingreso = $12, jerarquia = $13, especialidad = $14, usuario_id = $15, updated_at = $17 
-        WHERE id = $16 AND is_deleted = FALSE
-        RETURNING *`,
-        [colaboradorData.tipo_identificacion, colaboradorData.numero_identificacion, colaboradorData.nombre, colaboradorData.apellido, colaboradorData.fecha_nacimiento, colaboradorData.estado_civil, colaboradorData.sexo, colaboradorData.direccion, colaboradorData.telefono, colaboradorData.correo_electronico, colaboradorData.salario, colaboradorData.fecha_ingreso, colaboradorData.jerarquia, colaboradorData.especialidad, colaboradorData.usuario_id, colaboradorData.id, colaboradorData.updateTimestamp]
-    );
-    return result.rows[0];
-};
-
 const deleteColaborador = async (numero_identificacion) => {
     await pool.query('UPDATE colaboradores SET is_deleted = $1, deleted_at = $2 WHERE numero_identificacion = $3', [true, new Date(), numero_identificacion]);
 };
 
-const patchColaborador = async (numero_identificacion, updateFields) => {
+const updateColaborador = async (numero_identificacion, updateFields) => {
     const keys = Object.keys(updateFields);
     const values = keys.map(key => updateFields[key]);
     const setString = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
@@ -59,6 +48,5 @@ module.exports = {
     getColaboradorByNumId,
     getDeletedColaboradores,
     updateColaborador,
-    deleteColaborador,
-    patchColaborador,
+    deleteColaborador
 };
