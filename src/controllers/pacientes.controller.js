@@ -22,7 +22,7 @@ const addPaciente = async (req, res) => {
 
 const getAllPacientes = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM pacientes WHERE is_deleted = FALSE');
+    const result = await pool.query('SELECT * FROM pacientes');
     res.json(result.rows);
   } catch (err) {
     res.status(500).send(err.message);

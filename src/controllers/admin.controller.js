@@ -3,19 +3,19 @@ const pool = require('../../config/dbConfig');
 const addColaborador = async (req, res) => {
   try {
     const {
-      tipoDocumento,
-      numeroDocumento,
-      nombres,
-      apellidos,
-      fechaNacimiento,
-      estadoCivil,
+      tipo_identificacion,
+      numero_identificacion,
+      nombre,
+      apellido,
+      fecha_nacimiento,
+      estado_civil,
       sexo,
       direccion,
       telefono,
-      correo,
+      correo_electronico,
       salario,
-      fechaIngreso,
       jerarquia,
+      fecha_ingreso,
       especialidad,
     } = req.body;
 
@@ -25,7 +25,7 @@ const addColaborador = async (req, res) => {
       VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
       RETURNING *`,
-      [tipoDocumento, numeroDocumento, nombres, apellidos, fechaNacimiento, estadoCivil, sexo, direccion, telefono, correo, salario, fechaIngreso, jerarquia, especialidad]
+      [tipo_identificacion, numero_identificacion, nombre, apellido, fecha_nacimiento, estado_civil, sexo, direccion, telefono, correo_electronico, salario, fecha_ingreso, jerarquia, especialidad ]
     );
 
     res.status(201).json(result.rows[0]);
@@ -36,7 +36,7 @@ const addColaborador = async (req, res) => {
 
 const getAllColaboradores = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM colaboradores WHERE is_deleted = FALSE');
+    const result = await pool.query('SELECT * FROM colaboradores');
     res.json(result.rows);
   } catch (err) {
     res.status(500).send(err.message);
