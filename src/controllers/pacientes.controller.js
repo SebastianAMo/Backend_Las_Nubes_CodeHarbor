@@ -14,7 +14,9 @@ const addPaciente = async (req, res) => {
             role: 'paciente'
         });
 
-        if (!userCreationResponse.success) {
+        if (userCreationResponse) {
+            await pacienteModel.patchPaciente(pacienteData.numero_identificacion, {usuario_id: userCreationResponse.id});
+        }else{
             throw new Error(userCreationResponse.error);
         }
 

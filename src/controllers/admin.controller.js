@@ -1,4 +1,4 @@
-const userController = require('./user.controller');
+const userController = require('../models/user.model');
 const adminModel = require('../models/admin.model');
 
 const addColaborador = async (req, res) => {
@@ -8,11 +8,17 @@ const addColaborador = async (req, res) => {
 
       const userCreationResponse = await userController.createUser({
           username: colaboradorData.numero_identificacion,
-          password: colaboradorData.numero_identificacion 
+          password: colaboradorData.numero_identificacion,
+          role: colaboradorData.jerarquia
       });
-
-      if (!userCreationResponse.success) {
-          throw new Error(userCreationResponse.error);
+      
+      if (userCreationResponse) {
+          await adminModel.patchColaborador(
+              colaboradorData.numero_identificacion,
+              {usuario_id: userCreationResponse.id}
+          );
+      }else{
+        throw new Error(userCreationResponse.error);
       }
 
       res.status(201).json(colaborador);
