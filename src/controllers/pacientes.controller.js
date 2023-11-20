@@ -1,4 +1,5 @@
 const pool = require('../../config/dbConfig');
+const userController = require('./user.controller');
 
 const addPaciente = async (req, res) => {
   try{
@@ -12,6 +13,15 @@ const addPaciente = async (req, res) => {
       RETURNING *`,
       [tipo_identificacion, numero_identificacion, nombre, apellido, fecha_nacimiento, estado_civil, sexo, direccion, telefono, correo_electronico, usuario_id]
     );
+
+    const userCreationResponse = await userController.createUser({
+      username: numero_identificacion,
+      password: numero_identificacion
+    });
+
+    if (!userCreationResponse.success) {
+      throw new Error(userCreationResponse.error);
+    }
 
     res.status(201).json(result.rows[0]);
       

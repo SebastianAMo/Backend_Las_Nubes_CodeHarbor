@@ -1,9 +1,9 @@
 const pool = require('../../config/dbConfig');
 const bcrypt = require('bcryptjs');
 
-const createUser = async (req, res) => {
+const createUser = async (userData) => {
   try {
-    const { username, password, role } = req.body;
+    const { username, password, role} = userData;
     const estate = 'active';
     const createdAt = new Date();
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -11,12 +11,14 @@ const createUser = async (req, res) => {
       'INSERT INTO users (username, password, role, estate, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, role, created_at, estate', 
       [username, hashedPassword, role, estate, createdAt]
     );
-    res.status(201).json(result.rows[0]);
+
+    return { success: true, user: result.rows[0] };
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    return { success: false, error: err.message };
   }
 };
+
 
 const getUsers = async (req, res) => {
   try {
@@ -113,7 +115,6 @@ const patchUser = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
-
 
 module.exports = {
   createUser,

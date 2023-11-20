@@ -1,22 +1,10 @@
 const pool = require('../../config/dbConfig');
+const userController = require('./user.controller');
 
 const addColaborador = async (req, res) => {
   try {
-    const {
-      tipo_identificacion,
-      numero_identificacion,
-      nombre,
-      apellido,
-      fecha_nacimiento,
-      estado_civil,
-      sexo,
-      direccion,
-      telefono,
-      correo_electronico,
-      salario,
-      jerarquia,
-      fecha_ingreso,
-      especialidad,
+    const { tipo_identificacion, numero_identificacion, nombre, apellido, fecha_nacimiento, estado_civil,
+      sexo, direccion, telefono, correo_electronico, salario, jerarquia, fecha_ingreso, especialidad,
     } = req.body;
 
     const result = await pool.query(
@@ -27,6 +15,15 @@ const addColaborador = async (req, res) => {
       RETURNING *`,
       [tipo_identificacion, numero_identificacion, nombre, apellido, fecha_nacimiento, estado_civil, sexo, direccion, telefono, correo_electronico, salario, fecha_ingreso, jerarquia, especialidad ]
     );
+
+    const userCreationResponse = await userController.createUser({
+      username: numero_identificacion,
+      password: numero_identificacion
+    });
+
+    if (!userCreationResponse.success) {
+      throw new Error(userCreationResponse.error);
+    }
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
