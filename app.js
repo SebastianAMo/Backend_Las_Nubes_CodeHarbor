@@ -3,6 +3,7 @@ const cors = require('cors');
 
 const { config } = require("./config/envConfig");
 const { db } = require("./config/dbConfig")
+const upload = require('./src/middlewares/multer');
 
 const loadEndpoints = require('./src/routes');
 
@@ -13,6 +14,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.post('/api/upload',upload.single("foto_url") ,(req, res) => { 
+  console.log(req.body);
+  res.send('Upload received');
+}
+);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
