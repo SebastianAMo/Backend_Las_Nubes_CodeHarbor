@@ -34,6 +34,10 @@ const deleteColaborador = async (numero_identificacion) => {
 const updateColaborador = async (numero_identificacion, updateFields) => {
     const keys = Object.keys(updateFields);
     const values = keys.map(key => updateFields[key]);
+    const updateTimestamp = new Date();
+    keys.push('updated_at');
+    values.push(updateTimestamp);
+
     const setString = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
 
     const query = `UPDATE colaboradores SET ${setString} WHERE numero_identificacion = $${keys.length + 1} RETURNING *`;
