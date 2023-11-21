@@ -1,4 +1,4 @@
-const userModel = require('../models/user.model');
+const userModel = require('../models/colaboradores.model');
 
 const createUser = async (req, res) => {
     try {
@@ -89,6 +89,23 @@ const patchUser = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
+router.get('/descargar-informe', async (req, res) => {
+    try {
+        const datos = await obtenerDatosParaPDF(); // Reemplaza con tu lógica para obtener datos
+        const pdfBuffer = await generarPDFConDatos(datos);
+  
+        res.writeHead(200, {
+            'Content-Length': Buffer.byteLength(pdfBuffer),
+            'Content-Type': 'application/pdf',
+            'Content-disposition': 'attachment;filename=informe.pdf',
+        });
+        res.end(pdfBuffer);
+    } catch (error) {
+        console.error('Error al generar el PDF:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+  });
 
 module.exports = {
     createUser,
