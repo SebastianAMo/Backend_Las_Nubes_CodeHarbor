@@ -3,7 +3,6 @@ const router = require('express').Router();
 const {
   getUsers,
   getUserById,
-  createUser,
   updateUser,
   disabledUser,
   activeUser
@@ -15,7 +14,6 @@ const authorize = require('../middlewares/authorize');
 
 router.get('/', getUsers);
 router.get('/:id',  getUserById);
-router.post('/',  createUser);
 router.put('/:id',  updateUser);
 router.delete('/:id',  disabledUser);
 router.patch('/:id',  activeUser);
