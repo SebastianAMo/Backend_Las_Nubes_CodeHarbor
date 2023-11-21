@@ -44,6 +44,9 @@ const getColaboradorByNumId = async (req, res) => {
   try {
       const { numero_identificacion } = req.params;
       const colaborador = await adminModel.getColaboradorByNumId(numero_identificacion);
+      if (colaborador.foto_url) {
+        colaborador.foto_url = `${req.protocol}://${req.get('host')}/${colaborador.foto_url}`;
+      }
       res.json(colaborador);
   } catch (err) {
       res.status(500).send(err.message);
