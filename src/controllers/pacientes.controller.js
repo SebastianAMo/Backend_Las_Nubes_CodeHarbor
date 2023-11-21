@@ -1,4 +1,4 @@
-const userController = require('./user.controller');
+const userController = require('./colaboradores.controller');
 const pacienteModel = require('../models/pacientes.model');
 
 
@@ -7,7 +7,6 @@ const addPaciente = async (req, res) => {
         const pacienteData = req.body;
         const paciente = await pacienteModel.addPaciente(pacienteData);
 
-        // Lógica para la creación de usuario asociado, si es necesario
         const userCreationResponse = await userController.createUser({
             username: pacienteData.numero_identificacion,
             password: pacienteData.numero_identificacion,
