@@ -14,24 +14,12 @@ const createUser = async (userData) => {
 };
 
 const getUsers = async () => {
-    const result = await pool.query('SELECT id, username, role, created_at, estate FROM users WHERE estate <> $1', ['deleted']);
+    const result = await pool.query('SELECT id, username, role, created_at, estate FROM users');
     return result.rows;
 };
 
 const getUserById = async (id) => {
     const result = await pool.query('SELECT id, username, role, created_at, estate FROM users WHERE id = $1', [id]);
-    return result.rows[0];
-};
-
-const getDisabledUsers = async () => {
-    const result = await pool.query("SELECT id, username, role, created_at, estate FROM users WHERE estate = $1", ['disabled']);
-    return result.rows;
-};
-
-const updateUser = async (userData) => {
-    const { id, username, password, role, estate } = userData;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await pool.query('UPDATE users SET username = $1, password = $2, role = $3, estate = $4 WHERE id = $5 RETURNING *', [username, hashedPassword, role, estate, id]);
     return result.rows[0];
 };
 
@@ -43,26 +31,26 @@ const activeUser = async (id) => {
     await pool.query('UPDATE users SET estate = $1 WHERE id = $2', ['active', id]);
 };
 
-const patchUser = async (id, updates) => {
-    const allowedUpdates = ['username', 'role', 'estate'];
-    const updateKeys = Object.keys(updates).filter(key => allowedUpdates.includes(key));
-    const setClause = updateKeys.map((key, index) => `${key} = $${index + 2}`).join(', ');
-    const queryValues = updateKeys.map(key => updates[key]);
-    queryValues.push(id); 
-    const result = await pool.query(
-        `UPDATE users SET ${setClause} WHERE id = $1 RETURNING id, username, role, created_at, estate`,
-        [id, ...queryValues]
-    );
-    return result.rows.length === 0 ? null : result.rows[0];
+const updateUser = async (id, updateFields) => {
+    if (updateFields.password) {
+     updateFields.password = await bcrypt.hash(updateFields.password, 10);
+    }
+    const keys = Object.keys(updateFields);
+    const values = keys.map(key => updateFields[key]);
+
+    const setString = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
+
+    const query = `UPDATE users SET ${setString} WHERE id = $${keys.length + 1} RETURNING *`;
+    const result = await pool.query(query, [...values, id]);
+
+    return result.rows[0];
 };
 
 module.exports = {
     createUser,
     getUsers,
     getUserById,
-    getDisabledUsers,
     updateUser,
     disabledUser,
-    activeUser,
-    patchUser
+    activeUser
 };

@@ -6,7 +6,7 @@ const {
   updateUser,
   disabledUser,
   activeUser
-} = require('../controllers/user.controller');
+} = require('../controllers/colaboradores.controller');
 const authenticate = require('../middlewares/auth');
 const authorize = require('../middlewares/authorize');
 
@@ -14,8 +14,8 @@ const authorize = require('../middlewares/authorize');
 
 router.get('/', getUsers);
 router.get('/:id',  getUserById);
-router.put('/:id',  updateUser);
+router.patch('/:id',  updateUser);
 router.delete('/:id',  disabledUser);
-router.patch('/:id',  activeUser);
+router.patch('/activate/:id',  activeUser);
 
 module.exports = router;

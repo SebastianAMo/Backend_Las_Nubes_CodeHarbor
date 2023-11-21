@@ -7,7 +7,6 @@ const chatbotRouter = require('./chatbot.router');
 const colaboradoresRouter = require('./colaboradores.router');
 const citasRouter = require('./citas.router');
 const authRouter = require('./auth.router');
-const userRouter = require('./user.router');
 
 const loadEndpoints = (app) => {
     app.use('/api', router);
@@ -15,10 +14,9 @@ const loadEndpoints = (app) => {
     router.use('', pacientesRouter);
     router.use('', medicamentosRouter);
     router.use('', chatbotRouter);
-    router.use('', colaboradoresRouter);
+    router.use('/users', colaboradoresRouter);
     router.use('', citasRouter);
     router.use('/auth', authRouter);
-    router.use('/users', userRouter);
 
 }
 
