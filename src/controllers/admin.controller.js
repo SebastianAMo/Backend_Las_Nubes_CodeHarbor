@@ -1,4 +1,4 @@
-const userController = require('../models/user.model');
+const userController = require('../models/colaboradores.model');
 const adminModel = require('../models/admin.model');
 const fs = require('fs');
 const util = require('util');
