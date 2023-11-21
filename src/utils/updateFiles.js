@@ -3,7 +3,7 @@ const util = require('util');
 const unlinkAsync = util.promisify(fs.unlink); 
 
 async function updateOneFile(archivo, campo, currentInfo) {
-  if (archivo && archivo.path) {
+  if (archivo?.path) {
     if (currentInfo[campo] && archivo.path !== currentInfo[campo]) {
       await unlinkAsync(currentInfo[campo]);
     }
@@ -21,7 +21,7 @@ async function updateFiles(Files, currentInfo) {
   
   for (const [campo, archivo] of Object.entries(Files)) {
     console.log(currentInfo[campo]);
-    if (archivo && archivo[0]) {
+    if (archivo?.[0]) {
       if (currentInfo[campo] && archivo[0].path !== currentInfo[campo]) {
         await unlinkAsync(currentInfo[campo]);
       }
