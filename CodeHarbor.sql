@@ -116,8 +116,6 @@ CREATE TABLE "solicitudes" (
   "id_medicamento_recetado" integer
 );
 
-
--- Crear la tabla para almacenar los tokens en la lista negra
 CREATE TABLE IF NOT EXISTS blacklisted_tokens (
   id SERIAL PRIMARY KEY,
   token VARCHAR(500) NOT NULL,
