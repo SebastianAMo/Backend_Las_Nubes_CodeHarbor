@@ -3,6 +3,7 @@ const adminModel = require('../models/admin.model');
 const fs = require('fs');
 const util = require('util');
 const unlinkAsync = util.promisify(fs.unlink); 
+const { updateOneFile } = require('../utils/updateFiles');
 
 const addColaborador = async (req, res) => {
   try {
@@ -65,15 +66,9 @@ const updateColaborador = async (req, res) => {
 
   try {
     const infoColaborador = await adminModel.getColaboradorByNumId(numero_identificacion);
+    const updatePhoto = await updateOneFile(req.file,"foto_url" ,infoColaborador);
 
-    if (req.file) {
-      updateFields.foto_url = req.file.path;
-      if (infoColaborador.foto_url) {
-        await unlinkAsync(infoColaborador.foto_url);
-      }
-    }
-    console.log(updateFields);
-
+    Object.assign(updateFields, updatePhoto);
 
     const colaborador = await adminModel.updateColaborador(numero_identificacion, updateFields);
 
