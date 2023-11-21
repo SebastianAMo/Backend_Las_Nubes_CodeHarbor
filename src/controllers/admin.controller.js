@@ -13,7 +13,7 @@ const addColaborador = async (req, res) => {
       });
       
       if (userCreationResponse) {
-          await adminModel.patchColaborador(
+          await adminModel.updateColaborador(
               colaboradorData.numero_identificacion,
               {usuario_id: userCreationResponse.id}
           );
@@ -60,7 +60,7 @@ const updateColaborador = async (req, res) => {
   try {
       const { numero_identificacion } = req.params;
       const updateFields = req.body;
-      const colaborador = await adminModel.patchColaborador(numero_identificacion, updateFields);
+      const colaborador = await adminModel.updateColaborador(numero_identificacion, updateFields);
       res.json(colaborador);
   } catch (err) {
       res.status(500).send(err.message);

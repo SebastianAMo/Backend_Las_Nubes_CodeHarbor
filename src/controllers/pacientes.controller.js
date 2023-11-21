@@ -15,7 +15,7 @@ const addPaciente = async (req, res) => {
         });
 
         if (userCreationResponse) {
-            await pacienteModel.patchPaciente(pacienteData.numero_identificacion, {usuario_id: userCreationResponse.id});
+            await pacienteModel.updatePaciente(pacienteData.numero_identificacion, {usuario_id: userCreationResponse.id});
         }else{
             throw new Error(userCreationResponse.error);
         }
@@ -53,7 +53,6 @@ const getDeletedPacientes = async (req, res) => {
         res.status(500).send(err.message);
     }
 };
-
 
 const deletePaciente = async (req, res) => {
     try {

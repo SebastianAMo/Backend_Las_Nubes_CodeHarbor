@@ -38,7 +38,7 @@ const updateColaborador = async (numero_identificacion, updateFields) => {
 
     const query = `UPDATE colaboradores SET ${setString} WHERE numero_identificacion = $${keys.length + 1} RETURNING *`;
     const result = await pool.query(query, [...values, numero_identificacion]);
-
+    
     return result.rows[0];
 };
 
