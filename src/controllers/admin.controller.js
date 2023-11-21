@@ -1,5 +1,8 @@
 const userController = require('../models/user.model');
 const adminModel = require('../models/admin.model');
+const fs = require('fs');
+const util = require('util');
+const unlinkAsync = util.promisify(fs.unlink); 
 
 const addColaborador = async (req, res) => {
   try {
@@ -57,13 +60,27 @@ const deleteColaborador = async (req, res) => {
 };
 
 const updateColaborador = async (req, res) => {
+  const { numero_identificacion } = req.params;
+  const updateFields = req.body;
+
   try {
-      const { numero_identificacion } = req.params;
-      const updateFields = req.body;
-      const colaborador = await adminModel.updateColaborador(numero_identificacion, updateFields);
-      res.json(colaborador);
+    const infoColaborador = await adminModel.getColaboradorByNumId(numero_identificacion);
+
+    if (req.file) {
+      updateFields.foto_url = req.file.path;
+      if (infoColaborador.foto_url) {
+        await unlinkAsync(infoColaborador.foto_url);
+      }
+    }
+    console.log(updateFields);
+
+
+    const colaborador = await adminModel.updateColaborador(numero_identificacion, updateFields);
+
+    res.json(colaborador);
   } catch (err) {
-      res.status(500).send(err.message);
+    console.log('Error en updateColaborador:', err);
+    res.status(500).send(err.message);
   }
 };
 
