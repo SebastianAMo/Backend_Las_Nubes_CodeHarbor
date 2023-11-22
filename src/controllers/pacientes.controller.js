@@ -67,7 +67,7 @@ const updatePaciente = async (req, res) => {
     try {
         const { id } = req.params;
         const updateFields = req.body;
-        const paciente = await pacienteModel.patchPaciente(id, updateFields);
+        const paciente = await pacienteModel.updatePaciente(id, updateFields);
         res.json(paciente).status(200);
     } catch (err) {
         res.status(500).send(err.message);

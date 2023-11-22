@@ -22,11 +22,6 @@ const getColaboradorByNumId = async (numero_identificacion) => {
     return result.rows[0];
 };
 
-const getDeletedColaboradores = async () => {
-    const result = await pool.query('SELECT * FROM colaboradores WHERE is_deleted = true');
-    return result.rows;
-};
-
 const deleteColaborador = async (numero_identificacion) => {
     await pool.query('UPDATE colaboradores SET is_deleted = $1, deleted_at = $2 WHERE numero_identificacion = $3', [true, new Date(), numero_identificacion]);
 };
@@ -50,7 +45,6 @@ module.exports = {
     addColaborador,
     getAllColaboradores,
     getColaboradorByNumId,
-    getDeletedColaboradores,
     updateColaborador,
     deleteColaborador
 };

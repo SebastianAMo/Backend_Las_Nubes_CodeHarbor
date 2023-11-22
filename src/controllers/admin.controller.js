@@ -1,8 +1,5 @@
 const userController = require('../models/colaboradores.model');
 const adminModel = require('../models/admin.model');
-const fs = require('fs');
-const util = require('util');
-const unlinkAsync = util.promisify(fs.unlink); 
 const { updateOneFile } = require('../utils/updateFiles');
 
 const addColaborador = async (req, res) => {
