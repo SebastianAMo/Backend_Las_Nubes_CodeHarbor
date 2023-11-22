@@ -1,5 +1,6 @@
 const userController = require('./colaboradores.controller');
 const pacienteModel = require('../models/pacientes.model');
+const { updateOneFile } = require('../utils/updateFiles');
 
 
 const addPaciente = async (req, res) => {
@@ -44,15 +45,6 @@ const getPacienteByNumId = async (req, res) => {
     }
 };
 
-const getDeletedPacientes = async (req, res) => {
-    try {
-        const pacientes = await pacienteModel.getDeletedPacientes();
-        res.json(pacientes);
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-};
-
 const deletePaciente = async (req, res) => {
     try {
         const { id } = req.params;
@@ -64,9 +56,14 @@ const deletePaciente = async (req, res) => {
 };
 
 const updatePaciente = async (req, res) => {
+    const { id } = req.params;
+    const updateFields = req.body;
     try {
-        const { id } = req.params;
-        const updateFields = req.body;
+        const infPaciente = await pacienteModel.getPacienteByNumId(id);
+        const updatePhoto = await updateOneFile(req.file,"foto_url" ,infPaciente);
+
+        Object.assign(updateFields, updatePhoto); 
+        
         const paciente = await pacienteModel.updatePaciente(id, updateFields);
         res.json(paciente).status(200);
     } catch (err) {
@@ -78,7 +75,6 @@ module.exports = {
     addPaciente,
     getAllPacientes,
     getPacienteByNumId,
-    getDeletedPacientes,
     updatePaciente,
     deletePaciente
 };

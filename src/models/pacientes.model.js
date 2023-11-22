@@ -22,11 +22,6 @@ const getPacienteByNumId = async (numero_identificacion) => {
     return result.rows[0];
 };
 
-const getDeletedPacientes = async () => {
-    const result = await pool.query('SELECT * FROM pacientes WHERE is_deleted = TRUE');
-    return result.rows;
-};
-
 const deletePaciente = async (id) => {
     await pool.query('UPDATE pacientes SET is_deleted = TRUE, deleted_at = $2 WHERE id = $1', [id, new Date()]);
 };
@@ -47,7 +42,6 @@ module.exports = {
     addPaciente,
     getAllPacientes,
     getPacienteByNumId,
-    getDeletedPacientes,
     deletePaciente,
     updatePaciente
 };
