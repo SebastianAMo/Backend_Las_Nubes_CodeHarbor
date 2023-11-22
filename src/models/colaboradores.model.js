@@ -46,11 +46,128 @@ const updateUser = async (id, updateFields) => {
     return result.rows[0];
 };
 
+const getInformePacientes = async () => {
+    try {
+        // Consulta para contar pacientes activos
+        const pacientesActivos = await pool.query(
+            `SELECT COUNT(*) AS total_pacientes_activos
+             FROM pacientes
+             WHERE is_deleted = FALSE;`
+        );
+        // Consulta para contar pacientes en el hospital
+        const pacientesEnHospital = await pool.query(
+            `SELECT COUNT(DISTINCT id_paciente) AS pacientes_en_hospital
+             FROM entrada_pacientes
+             WHERE hora_entrada > CURRENT_DATE - INTERVAL '1 day';`
+        );
+        // Consulta para contar citas en el mes actual
+        const citasMesActual = await pool.query(
+            `SELECT COUNT(*) AS citas_mes_actual
+             FROM citas_medicas
+             WHERE EXTRACT(MONTH FROM fecha) = EXTRACT(MONTH FROM CURRENT_DATE)
+               AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE);`
+        );
+        return {
+            totalPacientesActivos: pacientesActivos.rows[0].total_pacientes_activos,
+            pacientesEnHospital: pacientesEnHospital.rows[0].pacientes_en_hospital,
+            citasMesActual: citasMesActual.rows[0].citas_mes_actual
+        };
+    } catch (err) {
+        console.error(err.message);
+        throw err;
+    }
+};
+
+
+const getInformesColaboradores = async () => {
+  try {
+    // Cantidad de colaboradores por especialidad
+    const colaboradoresPorEspecialidad = await pool.query(
+      `SELECT especialidad, COUNT(*) AS cantidad
+        FROM colaboradores
+        GROUP BY especialidad;`
+    );
+
+    // Número total de pacientes atendidos por todos los colaboradores en el mes actual
+    // Suponiendo que esto se puede calcular a partir de las citas médicas
+    const totalCitasMesActual = await pool.query(
+      `SELECT COUNT(DISTINCT id_paciente) AS pacientes_atendidos
+        FROM citas_medicas
+        WHERE EXTRACT(MONTH FROM fecha) = EXTRACT(MONTH FROM CURRENT_DATE)
+          AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE);`
+    );
+
+    // Total de salario de todos los colaboradores
+    const totalSalarios = await pool.query(
+      `SELECT SUM(salario) AS total_salarios
+        FROM colaboradores;`
+    );
+
+    return {
+      colaboradoresPorEspecialidad: colaboradoresPorEspecialidad.rows,
+      totalCitasMesActual: totalCitasMesActual.rows[0].pacientes_atendidos,
+      totalSalarios: totalSalarios.rows[0].total_salarios
+    };
+  } catch (err) {
+      console.error(err.message);
+      throw err;
+  }
+};
+
+const getInformesMedicamentos = async () => {
+  try {
+    // Inventario actual de medicamentos
+    const inventarioMedicamentos = await pool.query(
+      `SELECT denominacion, cantidad_total, fecha_vencimiento, alto_costo
+      FROM medicamentos
+      WHERE fecha_vencimiento > CURRENT_DATE;`
+    );
+
+    // Uso de medicamentos de alto costo
+    const usoMedicamentosAltoCosto = await pool.query(
+      `SELECT denominacion, COUNT(medicamento_id) AS veces_recetado
+      FROM medicamentos_recetados
+      JOIN medicamentos ON medicamentos.id = medicamentos_recetados.medicamento_id
+      WHERE alto_costo = TRUE
+      GROUP BY denominacion;`
+    );
+
+    // Medicamentos próximos a vencer
+    const medicamentosProximosVencer = await pool.query(
+      `SELECT denominacion, fecha_vencimiento
+      FROM medicamentos
+      WHERE fecha_vencimiento BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '3 months';`
+    );
+
+    // Resumen de solicitudes de medicamentos
+    const resumenSolicitudesMedicamentos = await pool.query(
+      `SELECT denominacion, COUNT(solicitudes.id) AS cantidad_solicitudes
+      FROM medicamentos
+      JOIN medicamentos_recetados ON medicamentos.id = medicamentos_recetados.medicamento_id
+      JOIN solicitudes ON medicamentos_recetados.id = solicitudes.id_medicamento_recetado
+      GROUP BY denominacion;`
+    );
+
+    return {
+      inventarioMedicamentos: inventarioMedicamentos.rows,
+      usoMedicamentosAltoCosto: usoMedicamentosAltoCosto.rows,
+      medicamentosProximosVencer: medicamentosProximosVencer.rows,
+      resumenSolicitudesMedicamentos: resumenSolicitudesMedicamentos.rows,
+    };
+  } catch (err) {
+    console.error(err.message);
+    throw err;
+  }
+};
+
 module.exports = {
     createUser,
     getUsers,
     getUserById,
     updateUser,
     disabledUser,
-    activeUser
+    activeUser,
+    getInformePacientes,
+    getInformesColaboradores,
+    getInformesMedicamentos
 };

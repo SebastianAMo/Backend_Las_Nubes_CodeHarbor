@@ -1,4 +1,5 @@
 const userModel = require('../models/colaboradores.model');
+const {generatePDF} = require('../utils/generatePDF');
 
 const createUser = async (req, res) => {
     try {
@@ -68,24 +69,39 @@ const updateUser = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
-/*
-router.get('/descargar-informe', async (req, res) => {
+
+const getInforme = async (req, res) => {
+    const type = req.params.option;
+    let titulo;
     try {
-        const datos = await obtenerDatosParaPDF(); // Reemplaza con tu lógica para obtener datos
-        const pdfBuffer = await generarPDFConDatos(datos);
-  
+        let informe;
+        if (type == 1){
+        informe = await userModel.getInformePacientes();
+        titulo = "Informe de pacientes";
+        } else if (type == 2){
+        informe = await userModel.getInformesColaboradores();
+        console.log(informe);
+        titulo = "Informe de colaboradores";
+        } else if (type == 3){
+        informe = await userModel.getInformesMedicamentos();
+        titulo = "Informe de medicamentos";
+        } else {
+            return res.status(404).send({ error: 'Informe not found or is disabled' });
+        }
+        const pdfBuffer = await generatePDF(informe,titulo);
+
         res.writeHead(200, {
             'Content-Length': Buffer.byteLength(pdfBuffer),
             'Content-Type': 'application/pdf',
             'Content-disposition': 'attachment;filename=informe.pdf',
         });
         res.end(pdfBuffer);
-    } catch (error) {
-        console.error('Error al generar el PDF:', error);
-        res.status(500).send('Error interno del servidor');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
     }
-  });
-*/
+};
+
 module.exports = {
     createUser,
     getUsers,
@@ -93,4 +109,5 @@ module.exports = {
     updateUser,
     disabledUser,
     activeUser,
+    getInforme
 };
