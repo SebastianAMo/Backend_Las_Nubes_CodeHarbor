@@ -1,4 +1,4 @@
-const userController = require('../models/colaboradores.model');
+const colaboradoresModel = require('../models/colaboradores.model');
 const adminModel = require('../models/admin.model');
 const { updateOneFile } = require('../utils/updateFiles');
 
@@ -7,7 +7,7 @@ const addColaborador = async (req, res) => {
       const colaboradorData = req.body;
       const colaborador = await adminModel.addColaborador(colaboradorData);
 
-      const userCreationResponse = await userController.createUser({
+      const userCreationResponse = await colaboradoresModel.createUser({
           username: colaboradorData.numero_identificacion,
           password: colaboradorData.numero_identificacion,
           role: colaboradorData.jerarquia
@@ -69,7 +69,17 @@ const updateColaborador = async (req, res) => {
     const updatePhoto = await updateOneFile(req.file,"foto_url" ,infoColaborador);
 
     Object.assign(updateFields, updatePhoto);
-
+    
+    // Update user role if necessary
+    if(updateFields.jerarquia){
+      const userUpdateResponse = await colaboradoresModel.updateUser(
+          infoColaborador.usuario_id,
+          {role: updateFields.jerarquia}
+      );
+      if (!userUpdateResponse) {
+        throw new Error(userUpdateResponse.error);
+      }
+    }
     const colaborador = await adminModel.updateColaborador(numero_identificacion, updateFields);
 
     res.json(colaborador);
