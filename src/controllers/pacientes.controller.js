@@ -1,4 +1,4 @@
-const userController = require('./colaboradores.controller');
+const {createUser} = require('../models/colaboradores.model');
 const pacienteModel = require('../models/pacientes.model');
 const { updateOneFile } = require('../utils/updateFiles');
 
@@ -8,7 +8,7 @@ const addPaciente = async (req, res) => {
         const pacienteData = req.body;
         const paciente = await pacienteModel.addPaciente(pacienteData);
 
-        const userCreationResponse = await userController.createUser({
+        const userCreationResponse = await createUser({
             username: pacienteData.numero_identificacion,
             password: pacienteData.numero_identificacion,
             role: 'paciente'
@@ -56,15 +56,17 @@ const deletePaciente = async (req, res) => {
 };
 
 const updatePaciente = async (req, res) => {
-    const { id } = req.params;
+    const { numero_identificacion } = req.params;
     const updateFields = req.body;
     try {
-        const infPaciente = await pacienteModel.getPacienteByNumId(id);
+
+        const infPaciente = await pacienteModel.getPacienteByNumId(numero_identificacion);
         const updatePhoto = await updateOneFile(req.file,"foto_url" ,infPaciente);
 
         Object.assign(updateFields, updatePhoto); 
-        
-        const paciente = await pacienteModel.updatePaciente(id, updateFields);
+
+        console.log(updateFields);
+        const paciente = await pacienteModel.updatePaciente(numero_identificacion, updateFields);
         res.json(paciente).status(200);
     } catch (err) {
         res.status(500).send(err.message);

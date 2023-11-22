@@ -26,15 +26,15 @@ const deletePaciente = async (id) => {
     await pool.query('UPDATE pacientes SET is_deleted = TRUE, deleted_at = $2 WHERE id = $1', [id, new Date()]);
 };
 
-const updatePaciente = async (id, updateFields) => {
+const updatePaciente = async (numero_identificacion, updateFields) => {
     const keys = Object.keys(updateFields);
     const values = keys.map(key => updateFields[key]);
     const updateTimestamp = new Date();
     keys.push('updated_at');
     values.push(updateTimestamp);
     const setString = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
-    const query = `UPDATE pacientes SET ${setString} WHERE id = $${keys.length + 1} RETURNING *`;
-    const result = await pool.query(query, [...values, id]);
+    const query = `UPDATE pacientes SET ${setString} WHERE numero_identificacion = $${keys.length + 1} RETURNING *`;
+    const result = await pool.query(query, [...values, numero_identificacion]);
     return result.rows[0];
 };
 
