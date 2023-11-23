@@ -27,10 +27,11 @@ router.post('/login', async (req, res) => {
         id: user.id,
       },
     };
-
+    
+    
     jwt.sign(payload, config.jwt_secret, { expiresIn: '1h' }, (err, token) => {
       if (err) throw err;
-      res.json({ token });
+      res.json({ token, role: user.role });
     });
   } catch (err) {
     console.error(err.message);
