@@ -110,7 +110,7 @@ CREATE TABLE "historias_clinicas" (
   "fecha_generacion" timestamp
 );
 
-CREATE TABLE antecedentes_personales (
+CREATE TABLE "antecedentes_personales"(
   "id" SERIAL PRIMARY KEY,
   "id_historia_clinica" INTEGER NOT NULL,
   "tabaco" VARCHAR,
@@ -148,18 +148,18 @@ COMMENT ON TABLE "historias_clinicas" IS 'Contiene la información detallada de 
 COMMENT ON TABLE "solicitudes" IS 'Almacena información sobre las solicitudes de medicamentos de alto costo';
 
 ALTER TABLE "solicitudes" ADD FOREIGN KEY ("id_medicamento_recetado") REFERENCES "medicamentos_recetados" ("id");
-ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
-ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("id");
+ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
+ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
 ALTER TABLE "colaboradores" ADD FOREIGN KEY ("usuario_id") REFERENCES "users" ("id");
 ALTER TABLE "pacientes" ADD FOREIGN KEY ("usuario_id") REFERENCES "users" ("id");
 ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_formula_medica") REFERENCES "formulas_medicas" ("id");
 ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_medicamento") REFERENCES "medicamentos" ("id");
-ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
-ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("id");
-ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("id");
-ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
-ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
-ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("secretario_id") REFERENCES "colaboradores" ("id");
+ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
+ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
+ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
+ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
+ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
+ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("secretario_id") REFERENCES "colaboradores" ("numero_identificacion");
 
 ALTER TABLE "colaboradores" ADD COLUMN "foto_url" VARCHAR;
 ALTER TABLE "pacientes" ADD COLUMN "foto_url" VARCHAR;

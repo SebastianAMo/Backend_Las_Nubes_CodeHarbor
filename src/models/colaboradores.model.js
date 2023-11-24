@@ -125,9 +125,9 @@ const getInformesMedicamentos = async () => {
 
     // Uso de medicamentos de alto costo
     const usoMedicamentosAltoCosto = await pool.query(
-      `SELECT denominacion, COUNT(medicamento_id) AS veces_recetado
+      `SELECT denominacion, COUNT(id_medicamento) AS veces_recetado
       FROM medicamentos_recetados
-      JOIN medicamentos ON medicamentos.id = medicamentos_recetados.medicamento_id
+      JOIN medicamentos ON medicamentos.id = medicamentos_recetados.id_medicamento
       WHERE alto_costo = TRUE
       GROUP BY denominacion;`
     );
@@ -143,7 +143,7 @@ const getInformesMedicamentos = async () => {
     const resumenSolicitudesMedicamentos = await pool.query(
       `SELECT denominacion, COUNT(solicitudes.id) AS cantidad_solicitudes
       FROM medicamentos
-      JOIN medicamentos_recetados ON medicamentos.id = medicamentos_recetados.medicamento_id
+      JOIN medicamentos_recetados ON medicamentos.id = medicamentos_recetados.id_medicamento
       JOIN solicitudes ON medicamentos_recetados.id = solicitudes.id_medicamento_recetado
       GROUP BY denominacion;`
     );
@@ -160,6 +160,37 @@ const getInformesMedicamentos = async () => {
   }
 };
 
+const getCitaByState = async (option,numero_identificacion, state,date1,time) => {
+  if (option == 1){
+    const result = await pool.query(
+      `SELECT * FROM citas_medicas 
+       WHERE (id_paciente = $1 OR id_colaborador = $1) 
+       AND estado = $2 AND fecha = $3 AND hora >= $4`,
+      [numero_identificacion, state,date1,time]);
+      return result.rows;
+    }else{
+    const result = await pool.query(
+      `SELECT * FROM citas_medicas 
+       WHERE estado = $1 AND fecha = $2 AND hora >= $3`,
+      [state,date1,time]);
+      return result.rows;
+} 
+}
+
+const updateCita = async (id_cita, updateFields) => {
+  const keys = Object.keys(updateFields);
+  const values = keys.map(key => updateFields[key]);
+
+  const setString = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
+  console.log(keys.length + 1);
+  console.log(id_cita);
+
+  const query = `UPDATE citas_medicas SET ${setString} WHERE id_cita = $${keys.length + 1} RETURNING *`;
+  const result = await pool.query(query, [...values, id_cita]);
+
+  return result.rows[0];
+}
+
 module.exports = {
     createUser,
     getUsers,
@@ -169,5 +200,7 @@ module.exports = {
     activeUser,
     getInformePacientes,
     getInformesColaboradores,
-    getInformesMedicamentos
+    getInformesMedicamentos,
+    getCitaByState,
+    updateCita
 };

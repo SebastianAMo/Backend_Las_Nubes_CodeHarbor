@@ -6,7 +6,11 @@ const {
   updateUser,
   disabledUser,
   activeUser,
-  getInforme
+  getInforme,
+  getCitasActivas,
+  getCitasActivasColaborador,
+  getCitasConfiColaborador,
+  updateCita
 } = require('../controllers/colaboradores.controller');
 const authenticate = require('../middlewares/auth');
 const authorize = require('../middlewares/authorize');
@@ -19,24 +23,9 @@ router.patch('/:id',  updateUser);
 router.delete('/:id',  disabledUser);
 router.patch('/activate/:id',  activeUser);
 router.get('/informe/:option',getInforme);
-
-/*
-router.get('/informe', async (req, res) => {
-    try {
-        const datos = await obtenerDatosParaPDF(); // Reemplaza con tu lógica para obtener datos
-        const pdfBuffer = await generarPDFConDatos(datos);
-  
-        res.writeHead(200, {
-            'Content-Length': Buffer.byteLength(pdfBuffer),
-            'Content-Type': 'application/pdf',
-            'Content-disposition': 'attachment;filename=informe.pdf',
-        });
-        res.end(pdfBuffer);
-    } catch (error) {
-        console.error('Error al generar el PDF:', error);
-        res.status(500).send('Error interno del servidor');
-    }
-  });
-*/
+router.get('/citaActivas/1',getCitasActivas);
+router.get('/citascolaborador/:numero_identificacion',getCitasActivasColaborador);
+router.get('/citascolaboradorconf/:numero_identificacion',getCitasConfiColaborador);
+router.patch('/update/:id_cita',updateCita);
 
 module.exports = router;

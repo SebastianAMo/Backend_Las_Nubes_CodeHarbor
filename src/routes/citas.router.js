@@ -1,20 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const {createCita, cancelCita,getCitasPaciente } = require('../controllers/citas.controller');
 
-router.post('/citas', (req, res) => {
-    res.send('Endpoint para solicitar una cita médica');
-});
-
-router.get('/citas', (req, res) => {
-    res.send('Endpoint para consultar todas las citas médicas');
-});
-
-router.get('/citas/:id', (req, res) => {
-    res.send(`Endpoint para consultar la cita médica con ID ${req.params.id}`);
-});
-
-router.delete('/citas/:id', (req, res) => {
-    res.send(`Endpoint para cancelar la cita médica con ID ${req.params.id}`);
-});
+router.post('/citas', createCita);
+router.get('/citas/:id', getCitasPaciente);
+router.delete('/citas/:id', cancelCita);
 
 module.exports = router;
