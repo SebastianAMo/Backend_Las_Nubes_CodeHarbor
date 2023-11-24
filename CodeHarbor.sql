@@ -76,7 +76,7 @@ CREATE TABLE "formulas_medicas" (
 CREATE TABLE "medicamentos_recetados" (
   "id" SERIAL PRIMARY KEY,
   "id_formula_medica" integer,
-  "medicamento_id" integer,
+  "id_medicamento" integer,
   "cantidad" integer,
   "prescripcion" text
 );
@@ -85,7 +85,7 @@ CREATE TABLE "citas_medicas" (
   "id_cita" SERIAL PRIMARY KEY,
   "fecha" date,
   "hora" time,
-  "colaborador_id" integer,
+  "id_colaborador" integer,
   "id_paciente" integer,
   "estado" varchar,
   "motivo_consulta" text,
@@ -153,10 +153,10 @@ ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "
 ALTER TABLE "colaboradores" ADD FOREIGN KEY ("usuario_id") REFERENCES "users" ("id");
 ALTER TABLE "pacientes" ADD FOREIGN KEY ("usuario_id") REFERENCES "users" ("id");
 ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_formula_medica") REFERENCES "formulas_medicas" ("id");
-ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("medicamento_id") REFERENCES "medicamentos" ("id");
+ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_medicamento") REFERENCES "medicamentos" ("id");
 ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
 ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("id");
-ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("colaborador_id") REFERENCES "colaboradores" ("id");
+ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("id");
 ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
 ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
 ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("secretario_id") REFERENCES "colaboradores" ("id");
