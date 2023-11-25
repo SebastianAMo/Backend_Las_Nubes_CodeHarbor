@@ -2,82 +2,96 @@ const pool = require('../../config/dbConfig');
 const bcrypt = require('bcryptjs');
 
 const createUser = async (userData) => {
-    const { username, password, role } = userData;
-    const estate = 'active';
-    const createdAt = new Date();
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await pool.query(
-        'INSERT INTO users (username, password, role, estate, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, role, created_at, estate', 
-        [username, hashedPassword, role, estate, createdAt]
-    );
-    return result.rows[0];
+  const { username, password, role } = userData;
+  const estate = 'active';
+  const createdAt = new Date();
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const result = await pool.query(
+    'INSERT INTO users (username, password, role, estate, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, role, created_at, estate',
+    [username, hashedPassword, role, estate, createdAt]
+  );
+  return result.rows[0];
 };
 
 const getUsers = async () => {
-    const result = await pool.query('SELECT id, username, role, created_at, estate FROM users');
-    return result.rows;
+  const result = await pool.query(
+    'SELECT id, username, role, created_at, estate FROM users'
+  );
+  return result.rows;
 };
 
 const getUserById = async (id) => {
-    const result = await pool.query('SELECT id, username, role, created_at, estate FROM users WHERE id = $1', [id]);
-    return result.rows[0];
+  const result = await pool.query(
+    'SELECT id, username, role, created_at, estate FROM users WHERE id = $1',
+    [id]
+  );
+  return result.rows[0];
 };
 
 const disabledUser = async (id) => {
-    await pool.query('UPDATE users SET estate = $1 WHERE id = $2', ['disabled', id]);
+  await pool.query('UPDATE users SET estate = $1 WHERE id = $2', [
+    'disabled',
+    id,
+  ]);
 };
 
 const activeUser = async (id) => {
-    await pool.query('UPDATE users SET estate = $1 WHERE id = $2', ['active', id]);
+  await pool.query('UPDATE users SET estate = $1 WHERE id = $2', [
+    'active',
+    id,
+  ]);
 };
 
 const updateUser = async (id, updateFields) => {
-    if (updateFields.password) {
-     updateFields.password = await bcrypt.hash(updateFields.password, 10);
-    }
-    const keys = Object.keys(updateFields);
-    const values = keys.map(key => updateFields[key]);
+  if (updateFields.password) {
+    updateFields.password = await bcrypt.hash(updateFields.password, 10);
+  }
+  const keys = Object.keys(updateFields);
+  const values = keys.map((key) => updateFields[key]);
 
-    const setString = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
+  const setString = keys
+    .map((key, index) => `${key} = $${index + 1}`)
+    .join(', ');
 
-    const query = `UPDATE users SET ${setString} WHERE id = $${keys.length + 1} RETURNING *`;
-    const result = await pool.query(query, [...values, id]);
+  const query = `UPDATE users SET ${setString} WHERE id = $${
+    keys.length + 1
+  } RETURNING *`;
+  const result = await pool.query(query, [...values, id]);
 
-    return result.rows[0];
+  return result.rows[0];
 };
 
 const getInformePacientes = async () => {
-    try {
-        // Consulta para contar pacientes activos
-        const pacientesActivos = await pool.query(
-            `SELECT COUNT(*) AS total_pacientes_activos
+  try {
+    // Consulta para contar pacientes activos
+    const pacientesActivos = await pool.query(
+      `SELECT COUNT(*) AS total_pacientes_activos
              FROM pacientes
              WHERE is_deleted = FALSE;`
-        );
-        // Consulta para contar pacientes en el hospital
-        const pacientesEnHospital = await pool.query(
-            `SELECT COUNT(DISTINCT id_paciente) AS pacientes_en_hospital
+    );
+    // Consulta para contar pacientes en el hospital
+    const pacientesEnHospital = await pool.query(
+      `SELECT COUNT(DISTINCT id_paciente) AS pacientes_en_hospital
              FROM entrada_pacientes
              WHERE hora_entrada > CURRENT_DATE - INTERVAL '1 day';`
-        );
-        // Consulta para contar citas en el mes actual
-        const citasMesActual = await pool.query(
-            `SELECT COUNT(*) AS citas_mes_actual
+    );
+    // Consulta para contar citas en el mes actual
+    const citasMesActual = await pool.query(
+      `SELECT COUNT(*) AS citas_mes_actual
              FROM citas_medicas
              WHERE EXTRACT(MONTH FROM fecha) = EXTRACT(MONTH FROM CURRENT_DATE)
                AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE);`
-        );
-        return {
-            totalPacientesActivos: pacientesActivos.rows[0].total_pacientes_activos,
-            pacientesEnHospital: pacientesEnHospital.rows[0].pacientes_en_hospital,
-            citasMesActual: citasMesActual.rows[0].citas_mes_actual
-        };
-    } catch (err) {
-        console.error(err.message);
-        throw err;
-    }
+    );
+    return {
+      totalPacientesActivos: pacientesActivos.rows[0].total_pacientes_activos,
+      pacientesEnHospital: pacientesEnHospital.rows[0].pacientes_en_hospital,
+      citasMesActual: citasMesActual.rows[0].citas_mes_actual,
+    };
+  } catch (err) {
+    console.error(err.message);
+    throw err;
+  }
 };
-
 
 const getInformesColaboradores = async () => {
   try {
@@ -106,11 +120,11 @@ const getInformesColaboradores = async () => {
     return {
       colaboradoresPorEspecialidad: colaboradoresPorEspecialidad.rows,
       totalCitasMesActual: totalCitasMesActual.rows[0].pacientes_atendidos,
-      totalSalarios: totalSalarios.rows[0].total_salarios
+      totalSalarios: totalSalarios.rows[0].total_salarios,
     };
   } catch (err) {
-      console.error(err.message);
-      throw err;
+    console.error(err.message);
+    throw err;
   }
 };
 
@@ -160,47 +174,14 @@ const getInformesMedicamentos = async () => {
   }
 };
 
-const getCitaByState = async (option,numero_identificacion, state,date1,time) => {
-  if (option == 1){
-    const result = await pool.query(
-      `SELECT * FROM citas_medicas 
-       WHERE (id_paciente = $1 OR id_colaborador = $1) 
-       AND estado = $2 AND fecha = $3 AND hora >= $4`,
-      [numero_identificacion, state,date1,time]);
-      return result.rows;
-    }else{
-    const result = await pool.query(
-      `SELECT * FROM citas_medicas 
-       WHERE estado = $1 AND fecha = $2 AND hora >= $3`,
-      [state,date1,time]);
-      return result.rows;
-} 
-}
-
-const updateCita = async (id_cita, updateFields) => {
-  const keys = Object.keys(updateFields);
-  const values = keys.map(key => updateFields[key]);
-
-  const setString = keys.map((key, index) => `${key} = $${index + 1}`).join(', ');
-  console.log(keys.length + 1);
-  console.log(id_cita);
-
-  const query = `UPDATE citas_medicas SET ${setString} WHERE id_cita = $${keys.length + 1} RETURNING *`;
-  const result = await pool.query(query, [...values, id_cita]);
-
-  return result.rows[0];
-}
-
 module.exports = {
-    createUser,
-    getUsers,
-    getUserById,
-    updateUser,
-    disabledUser,
-    activeUser,
-    getInformePacientes,
-    getInformesColaboradores,
-    getInformesMedicamentos,
-    getCitaByState,
-    updateCita
+  createUser,
+  getUsers,
+  getUserById,
+  updateUser,
+  disabledUser,
+  activeUser,
+  getInformePacientes,
+  getInformesColaboradores,
+  getInformesMedicamentos,
 };

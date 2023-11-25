@@ -9,15 +9,14 @@ const citasRouter = require('./citas.router');
 const authRouter = require('./auth.router');
 
 const loadEndpoints = (app) => {
-    app.use('/api', router);
-    router.use('/admin', adminRouter);
-    router.use('', pacientesRouter);
-    router.use('', medicamentosRouter);
-    router.use('', chatbotRouter);
-    router.use('/users', colaboradoresRouter);
-    router.use('', citasRouter);
-    router.use('/auth', authRouter);
-
-}
+  app.use('/api', router);
+  router.use('/admin', adminRouter);
+  router.use('', pacientesRouter);
+  router.use('', medicamentosRouter);
+  router.use('', chatbotRouter);
+  router.use('/users', colaboradoresRouter);
+  router.use('', citasRouter);
+  router.use('/auth', authRouter);
+};
 
 module.exports = loadEndpoints;

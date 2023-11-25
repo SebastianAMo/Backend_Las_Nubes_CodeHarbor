@@ -5,12 +5,16 @@ const authorize = (roles) => {
     try {
       // Obtener el usuario del token
       const userId = req.user.id;
-      const result = await pool.query('SELECT role FROM users WHERE id = $1', [userId]);
+      const result = await pool.query('SELECT role FROM users WHERE id = $1', [
+        userId,
+      ]);
       const user = result.rows[0];
 
       // Verificar si el usuario tiene un rol permitido
       if (!roles.includes(user.role)) {
-        return res.status(403).json({ msg: 'Access Denied: You do not have sufficient permissions' });
+        return res.status(403).json({
+          msg: 'Access Denied: You do not have sufficient permissions',
+        });
       }
       next();
     } catch (err) {

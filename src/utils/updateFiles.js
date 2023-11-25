@@ -1,6 +1,6 @@
 const fs = require('fs');
 const util = require('util');
-const unlinkAsync = util.promisify(fs.unlink); 
+const unlinkAsync = util.promisify(fs.unlink);
 
 async function updateOneFile(archivo, campo, currentInfo) {
   if (archivo?.path) {
@@ -18,7 +18,7 @@ async function updateFiles(Files, currentInfo) {
   if (!Files) {
     return actualizaciones;
   }
-  
+
   for (const [campo, archivo] of Object.entries(Files)) {
     console.log(currentInfo[campo]);
     if (archivo?.[0]) {
@@ -32,9 +32,7 @@ async function updateFiles(Files, currentInfo) {
   return actualizaciones;
 }
 
-
-
 module.exports = {
   updateFiles,
-  updateOneFile
+  updateOneFile,
 };
