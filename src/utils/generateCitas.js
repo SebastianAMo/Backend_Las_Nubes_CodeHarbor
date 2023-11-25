@@ -111,6 +111,16 @@ const agregarCitasSiEsNecesario = async () => {
   }
 };
 
+// Function to change state of citas where colaborador with jerarquia Médico is deleted to 'cancelada'
+const deleteCitas = async () => {
+  const result = await pool.query(
+    `UPDATE citas_medicas SET estado = 'cancelada' WHERE id_colaborador IN (SELECT numero_identificacion FROM colaboradores WHERE jerarquia = 'Médico' AND is_deleted = true) RETURNING *`
+  );
+  return result.rows;
+};
+
+
 module.exports = {
   agregarCitasSiEsNecesario,
+  deleteCitas,
 };
