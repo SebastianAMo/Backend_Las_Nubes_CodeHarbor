@@ -54,9 +54,10 @@ const getPacienteByNumId = async (req, res) => {
 
 const deletePaciente = async (req, res) => {
   try {
-    const { id } = req.params;
-    await pacienteModel.deletePaciente(id);
+    const id  = req.params.numero_identificacion;
+    console.log(id);
     await pacienteModel.quitarColaboradorDePacienteEliminado(id);
+    await pacienteModel.deletePaciente(id);
     res.json({ message: 'Paciente eliminado lógicamente' });
   } catch (err) {
     res.status(500).send(err.message);
@@ -74,7 +75,6 @@ const updatePaciente = async (req, res) => {
 
     Object.assign(updateFields, updatePhoto);
 
-    console.log(updateFields);
     const paciente = await pacienteModel.updatePaciente(
       numero_identificacion,
       updateFields

@@ -37,11 +37,13 @@ const getPacienteByNumId = async (numero_identificacion) => {
   return result.rows[0];
 };
 
-const deletePaciente = async (id) => {
-  await pool.query(
-    'UPDATE pacientes SET is_deleted = TRUE, deleted_at = $2 WHERE id = $1',
-    [id, new Date()]
+const deletePaciente = async (numero_identificacion) => {
+  const state = true;
+  const result = await pool.query(
+    'UPDATE pacientes SET is_deleted = $1, deleted_at = $2 WHERE numero_identificacion = $3 RETURNING *' ,
+    [state, new Date(),numero_identificacion]
   );
+  return result.rows[0];
 };
 
 const updatePaciente = async (numero_identificacion, updateFields) => {
@@ -82,7 +84,7 @@ const asignarColaboradorAPaciente = async (numeroIdentificacionPaciente) => {
     colaborador_encargado: numeroIdentificacionColaborador,
   });
 
-  return result.rows[0];
+  return result;
 };
 
 const reasignarPacientesDeColaborador = async (
@@ -106,13 +108,17 @@ const reasignarPacientesDeColaborador = async (
   return true;
 };
 
-const quitarColaboradorDePacienteEliminado = async (
-  numeroIdentificacionPaciente
-) => {
-  await pool.query(
+const quitarColaboradorDePacienteEliminado = async (numeroIdentificacionPaciente) => {
+  const result = await pool.query(
     `UPDATE pacientes SET colaborador_encargado = NULL WHERE numero_identificacion = $1`,
     [numeroIdentificacionPaciente]
   );
+
+  if (result.rowCount === 0) {
+    throw new Error('No se pudo quitar el colaborador encargado del paciente');
+  }
+
+  return true;
 };
 
 module.exports = {

@@ -59,9 +59,8 @@ const deleteColaborador = async (req, res) => {
   try {
     const { numero_identificacion } = req.params;
     await adminModel.deleteColaborador(numero_identificacion);
-    await pacientesModel.quitarColaboradorDePacientesEliminado(
-      numero_identificacion
-    );
+    await pacientesModel.reasignarPacientesDeColaborador( numero_identificacion);
+    
     res.json({ message: 'Colaborador eliminado' });
   } catch (err) {
     res.status(500).send(err.message);
