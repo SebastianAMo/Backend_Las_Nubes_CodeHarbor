@@ -87,6 +87,7 @@ CREATE TABLE "citas_medicas" (
   "hora" time,
   "id_colaborador" integer,
   "id_paciente" integer,
+  "eps" varchar,
   "estado" varchar,
   "motivo_consulta" text,
   "diagnostico_consulta" text,

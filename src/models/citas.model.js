@@ -18,7 +18,13 @@ const getCitasSinAsignar = async () => {
 
 const getCitaById = async (id_cita) => {
   const result = await pool.query(
-    `SELECT * FROM citas_medicas WHERE id_cita = $1`,
+    `SELECT cm.*, 
+            p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono,
+            c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
+     FROM citas_medicas cm
+     LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
+     JOIN colaboradores c ON cm.id_colaborador = c.numero_identificacion
+     WHERE cm.id_cita = $1`,
     [id_cita]
   );
   return result.rows[0];
@@ -26,21 +32,34 @@ const getCitaById = async (id_cita) => {
 
 const getCitasPacienteActivas = async (numero_identificacion) => {
   const result = await pool.query(
-    `SELECT * FROM citas_medicas WHERE id_paciente = $1 AND estado = 'activa'`,
-    [numero_identificacion]
+      `SELECT cm.*, 
+              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono,
+              c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
+       FROM citas_medicas cm
+       JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
+       JOIN colaboradores c ON cm.id_colaborador = c.numero_identificacion
+       WHERE cm.id_paciente = $1 AND cm.estado = 'activa'`,
+      [numero_identificacion]
   );
   return result.rows;
 };
 
+
 const getCitasByState = async (numero_identificacion, state) => {
   const currentDate = new Date().toISOString().split('T')[0];
   const result = await pool.query(
-    `SELECT * FROM citas_medicas 
-         WHERE (id_paciente = $1 OR id_colaborador = $1) AND estado = $2 and fecha = $3`,
-    [numero_identificacion, state, currentDate]
+      `SELECT cm.*, 
+              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono,
+              c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
+       FROM citas_medicas cm
+       LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
+       LEFT JOIN colaboradores c ON cm.id_colaborador = c.numero_identificacion
+       WHERE (cm.id_paciente = $1 OR cm.id_colaborador = $1) AND cm.estado = $2 AND cm.fecha = $3`,
+      [numero_identificacion, state, currentDate]
   );
   return result.rows;
 };
+
 
 // Cancela una cita médica
 const cancelCita = async (numero_identificacion) => {
@@ -55,8 +74,14 @@ const cancelCita = async (numero_identificacion) => {
 const getCitasActivas = async () => {
   const currentDate = new Date().toISOString().split('T')[0];
   const result = await pool.query(
-    `SELECT * FROM citas_medicas WHERE estado = 'activa' AND fecha = $1`,
-    [currentDate]
+      `SELECT cm.*, 
+              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono,
+              c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
+       FROM citas_medicas cm
+       LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
+       LEFT JOIN colaboradores c ON cm.id_colaborador = c.numero_identificacion
+       WHERE cm.estado = 'activa' AND cm.fecha = $1`,
+      [currentDate]
   );
   return result.rows;
 };

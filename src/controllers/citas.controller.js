@@ -57,7 +57,7 @@ const getCitasMedicoConfirmadas = async (req, res) => {
   }
 };
 
-const getCitasMecicoenCita= async (req, res) => {
+const getCitasMecicoenCita = async (req, res) => {
   try {
     const numero_identificacion = req.params.numero_identificacion;
     const citas = await citasModel.getCitasByState(
@@ -65,10 +65,10 @@ const getCitasMecicoenCita= async (req, res) => {
       'en cita'
     );
     res.json(citas).status(200);
-  }catch (error) {
+  } catch (error) {
     res.json({ message: error.message }).status(500);
   }
-}
+};
 
 const pedirCita = async (req, res) => {
   try {
