@@ -72,7 +72,6 @@ router.post('/logout', authenticate, async (req, res) => {
 // @desc    Verify if the token is still valid
 // @access  Public
 router.get('/verify-token', async (req, res) => {
-
   try {
     const bearerHeader = req.header('Authorization');
     if (!bearerHeader)
@@ -87,7 +86,7 @@ router.get('/verify-token', async (req, res) => {
       return res.status(401).json({ msg: 'Token is blacklisted' });
 
     const decoded = jwt.verify(token, config.jwt_secret);
-    res.json({ msg: 'Token is valid'}, decoded).status(200);
+    res.json({ msg: 'Token is valid' }, decoded).status(200);
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
       return res.status(401).json({ msg: 'Token has expired' });
@@ -98,6 +97,5 @@ router.get('/verify-token', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-
 
 module.exports = router;
