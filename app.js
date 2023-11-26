@@ -22,7 +22,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-
 cron.schedule('0 0 * * *', async () => {
   console.log('Ejecutando la tarea de generación de citas a medianoche');
   try {

@@ -21,6 +21,10 @@ const addPaciente = async (req, res) => {
       throw new Error(userCreationResponse.error);
     }
 
+    await pacienteModel.asignarColaboradorAPaciente(
+      pacienteData.numero_identificacion
+    );
+
     res.status(201).json(paciente);
   } catch (err) {
     res.status(500).send(err.message);
@@ -52,6 +56,7 @@ const deletePaciente = async (req, res) => {
   try {
     const { id } = req.params;
     await pacienteModel.deletePaciente(id);
+    await pacienteModel.quitarColaboradorDePacienteEliminado(id);
     res.json({ message: 'Paciente eliminado lógicamente' });
   } catch (err) {
     res.status(500).send(err.message);
@@ -74,6 +79,10 @@ const updatePaciente = async (req, res) => {
       numero_identificacion,
       updateFields
     );
+
+    if (!updateFields.is_deleted) {
+      await pacienteModel.asignarColaboradorAPaciente(numero_identificacion);
+    }
     res.json(paciente).status(200);
   } catch (err) {
     res.status(500).send(err.message);

@@ -41,6 +41,7 @@ CREATE TABLE "pacientes" (
   "direccion" varchar,
   "telefono" varchar,
   "correo_electronico" varchar UNIQUE,
+  "colaborador_encargado" integer,
   "usuario_id" integer,
   "updated_at" TIMESTAMP,
   "is_deleted" BOOLEAN DEFAULT FALSE,
@@ -153,6 +154,7 @@ ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pac
 ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
 ALTER TABLE "colaboradores" ADD FOREIGN KEY ("usuario_id") REFERENCES "users" ("id");
 ALTER TABLE "pacientes" ADD FOREIGN KEY ("usuario_id") REFERENCES "users" ("id");
+ALTER TABLE "pacientes" ADD FOREIGN KEY ("colaborador_encargado") REFERENCES "colaboradores" ("numero_identificacion");
 ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_formula_medica") REFERENCES "formulas_medicas" ("id");
 ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_medicamento") REFERENCES "medicamentos" ("id");
 ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");

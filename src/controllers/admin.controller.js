@@ -1,5 +1,6 @@
 const colaboradoresModel = require('../models/colaboradores.model');
 const adminModel = require('../models/admin.model');
+const pacientesModel = require('../models/pacientes.model');
 const { updateOneFile } = require('../utils/updateFiles');
 
 const addColaborador = async (req, res) => {
@@ -58,6 +59,9 @@ const deleteColaborador = async (req, res) => {
   try {
     const { numero_identificacion } = req.params;
     await adminModel.deleteColaborador(numero_identificacion);
+    await pacientesModel.quitarColaboradorDePacientesEliminado(
+      numero_identificacion
+    );
     res.json({ message: 'Colaborador eliminado' });
   } catch (err) {
     res.status(500).send(err.message);
