@@ -39,6 +39,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// @route   POST api/auth/verify-token
+// @desc    Verify if the token is still valid
+// @access  Public
 router.post('/logout', authenticate, async (req, res) => {
   try {
     const bearerHeader = req.header('Authorization');
@@ -64,5 +67,37 @@ router.post('/logout', authenticate, async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
+
+// @route   GET api/auth/verify-token
+// @desc    Verify if the token is still valid
+// @access  Public
+router.get('/verify-token', async (req, res) => {
+
+  try {
+    const bearerHeader = req.header('Authorization');
+    if (!bearerHeader)
+      return res.status(401).json({ msg: 'No token, authorization denied' });
+
+    const token = bearerHeader.split(' ')[1];
+    const isBlacklisted = await pool.query(
+      'SELECT * FROM blacklisted_tokens WHERE token = $1',
+      [token]
+    );
+    if (isBlacklisted.rows.length > 0)
+      return res.status(401).json({ msg: 'Token is blacklisted' });
+
+    const decoded = jwt.verify(token, config.jwt_secret);
+    res.json({ msg: 'Token is valid'}, decoded).status(200);
+  } catch (err) {
+    if (err instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ msg: 'Token has expired' });
+    } else if (err instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ msg: 'Invalid token' });
+    }
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 
 module.exports = router;
