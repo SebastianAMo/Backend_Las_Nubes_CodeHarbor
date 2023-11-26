@@ -19,7 +19,7 @@ const getCitasSinAsignar = async () => {
 const getCitaById = async (id_cita) => {
   const result = await pool.query(
     `SELECT cm.*, 
-            p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono,
+            p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
             c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
      FROM citas_medicas cm
      LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
@@ -33,7 +33,7 @@ const getCitaById = async (id_cita) => {
 const getCitasPacienteActivas = async (numero_identificacion) => {
   const result = await pool.query(
       `SELECT cm.*, 
-              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono,
+              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
               c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
        FROM citas_medicas cm
        JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
@@ -49,7 +49,7 @@ const getCitasByState = async (numero_identificacion, state) => {
   const currentDate = new Date().toISOString().split('T')[0];
   const result = await pool.query(
       `SELECT cm.*, 
-              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono,
+              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
               c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
        FROM citas_medicas cm
        LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
@@ -75,7 +75,7 @@ const getCitasActivas = async () => {
   const currentDate = new Date().toISOString().split('T')[0];
   const result = await pool.query(
       `SELECT cm.*, 
-              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono,
+              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
               c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
        FROM citas_medicas cm
        LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
