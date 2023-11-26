@@ -9,13 +9,12 @@ const {
   getInforme,
 } = require('../controllers/colaboradores.controller');
 const authenticate = require('../middlewares/auth');
-const authorize = require('../middlewares/authorize');
 
-router.get('/', getUsers);
-router.get('/:id', getUserById);
-router.patch('/:id', updateUser);
-router.delete('/:id', disabledUser);
-router.patch('/activate/:id', activeUser);
-router.get('/informe/:option', getInforme);
+router.get('/',authenticate, getUsers);
+router.get('/:id',authenticate, getUserById);
+router.patch('/:id',authenticate, updateUser);
+router.delete('/:id',authenticate, disabledUser);
+router.patch('/activate/:id',authenticate, activeUser);
+router.get('/informe/:option',authenticate, getInforme);
 
 module.exports = router;

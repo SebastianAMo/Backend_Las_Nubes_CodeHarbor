@@ -7,13 +7,14 @@ const {
   updatePaciente,
   deletePaciente,
 } = require('../controllers/pacientes.controller');
+const authenticate = require('../middlewares/auth');
 const upload = require('../middlewares/multer');
 
-router.post('/pacientes', addPaciente);
-router.get('/pacientes', getAllPacientes);
-router.get('/pacientes/:numero_identificacion', getPacienteByNumId);
+router.post('/pacientes',authenticate, addPaciente);
+router.get('/pacientes',authenticate, getAllPacientes);
+router.get('/pacientes/:numero_identificacion',authenticate, getPacienteByNumId);
 router.patch(
-  '/pacientes/:numero_identificacion',
+  '/pacientes/:numero_identificacion',authenticate,
   upload.single('foto_url'),
   updatePaciente
 );
