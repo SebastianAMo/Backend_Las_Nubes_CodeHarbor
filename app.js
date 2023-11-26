@@ -6,7 +6,10 @@ const { config } = require('./config/envConfig');
 const loadEndpoints = require('./src/routes');
 
 const cron = require('node-cron');
-const { agregarCitasSiEsNecesario } = require('./src/utils/generateCitas');
+const {
+  agregarCitasSiEsNecesario,
+  deleteCitas,
+} = require('./src/utils/generateCitas');
 
 const app = express();
 
@@ -19,15 +22,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-app.get('/api', async (req, res) => {
-  await agregarCitasSiEsNecesario();
-  res.json({ message: 'Hello world' });
-});
 
 cron.schedule('0 0 * * *', async () => {
   console.log('Ejecutando la tarea de generación de citas a medianoche');
   try {
     await agregarCitasSiEsNecesario();
+    await deleteCitas();
     console.log('Tarea completada con éxito');
   } catch (error) {
     console.error('Error al ejecutar la tarea de generación de citas:', error);

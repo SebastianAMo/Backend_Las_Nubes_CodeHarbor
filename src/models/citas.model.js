@@ -16,11 +16,27 @@ const getCitasSinAsignar = async () => {
   return result.rows;
 };
 
-const getCitasPaciente = async (numero_identificacion, state) => {
+const getCitaById = async (id_cita) => {
+  const result = await pool.query(
+    `SELECT * FROM citas_medicas WHERE id_cita = $1`,
+    [id_cita]
+  );
+  return result.rows[0];
+};
+
+const getCitasPacienteActivas = async (numero_identificacion) => {
+  const result = await pool.query(
+    `SELECT * FROM citas_medicas WHERE id_paciente = $1 AND estado = 'activa'`,
+    [numero_identificacion]
+  );
+  return result.rows;
+};
+
+const getCitasByState = async (numero_identificacion, state) => {
   const currentDate = new Date().toISOString().split('T')[0];
   const result = await pool.query(
     `SELECT * FROM citas_medicas 
-         WHERE (id_paciente = $1 OR id_colaborador = $1) AND estado = $2 and fecha > $3`,
+         WHERE (id_paciente = $1 OR id_colaborador = $1) AND estado = $2 and fecha = $3`,
     [numero_identificacion, state, currentDate]
   );
   return result.rows;
@@ -35,29 +51,13 @@ const cancelCita = async (numero_identificacion) => {
   return result.rows[0];
 };
 
-// Obtiene citas por varios criterios, opción 1 para citas por identificación y estado, opción 2 por estado, fecha y hora
-const getCitasByCriteria = async (
-  option,
-  numero_identificacion,
-  state,
-  date1,
-  time
-) => {
-  let result;
-  if (option === 1) {
-    result = await pool.query(
-      `SELECT * FROM citas_medicas 
-             WHERE (id_paciente = $1 OR id_colaborador = $1) 
-             AND estado = $2 AND fecha = $3 AND hora >= $4`,
-      [numero_identificacion, state, date1, time]
-    );
-  } else {
-    result = await pool.query(
-      `SELECT * FROM citas_medicas 
-             WHERE estado = $1 AND fecha = $2 AND hora >= $3`,
-      [state, date1, time]
-    );
-  }
+// Get citas with state 'activa' and date = today
+const getCitasActivas = async () => {
+  const currentDate = new Date().toISOString().split('T')[0];
+  const result = await pool.query(
+    `SELECT * FROM citas_medicas WHERE estado = 'activa' AND fecha = $1`,
+    [currentDate]
+  );
   return result.rows;
 };
 
@@ -75,4 +75,12 @@ const updateCita = async (id_cita, updateFields) => {
   return result.rows[0];
 };
 
-module.exports = {};
+module.exports = {
+  getCitasSinAsignar,
+  getCitasPacienteActivas,
+  getCitasByState,
+  getCitaById,
+  cancelCita,
+  getCitasActivas,
+  updateCita,
+};

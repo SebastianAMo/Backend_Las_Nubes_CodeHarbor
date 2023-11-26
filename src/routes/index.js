@@ -15,7 +15,7 @@ const loadEndpoints = (app) => {
   router.use('', medicamentosRouter);
   router.use('', chatbotRouter);
   router.use('/users', colaboradoresRouter);
-  router.use('', citasRouter);
+  router.use('/citas', citasRouter);
   router.use('/auth', authRouter);
 };
 

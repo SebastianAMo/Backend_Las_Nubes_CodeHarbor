@@ -1,93 +1,157 @@
 const citasModel = require('../models/citas.model');
 
-const getCitasPaciente = async (req, res) => {
+const getCitasSinAsignar = async (req, res) => {
   try {
-    const { id } = req.params;
-    const citas = await citasModel.getCitaByState(id, 'activa');
-    res.status(200).json(citas);
-  } catch (err) {
-    res.status(500).send(err.message);
+    const citas = await citasModel.getCitasSinAsignar();
+    res.json(citas).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
   }
 };
 
-const cancelCita = async (req, res) => {
+const getCitasPacienteActivas = async (req, res) => {
   try {
-    const { id } = req.params;
-    await citasModel.cancelCita(id);
-    res.status(200).json({ msg: 'Cita cancelada' });
-  } catch (err) {
-    res.status(500).send(err.message);
+    const numero_identificacion = req.params.numero_identificacion;
+    const citas = await citasModel.getCitasPacienteActivas(
+      numero_identificacion
+    );
+    res.json(citas).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
   }
 };
 
 const getCitasActivas = async (req, res) => {
   try {
-    const date = new Date();
-    const date1 = date.toISOString().split('T')[0];
-    const time = date.toISOString().split('T')[1].split('.')[0];
-    const citas = await userModel.getCitaByState(0, 0, 'activa', date1, time);
-    res.json(citas);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error');
+    const citas = await citasModel.getCitasActivas();
+    res.json(citas).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
   }
 };
 
-const getCitasActivasColaborador = async (req, res) => {
+//La consulta del medico para ver sus citas activas pendientes del día actual
+const getCitasMedicoActivas = async (req, res) => {
   try {
-    const { numero_identificacion } = req.params;
-    const date = new Date();
-    const date1 = date.toISOString().split('T')[0];
-    const time = date.toISOString().split('T')[1].split('.')[0];
-    const citas = await userModel.getCitaByState(
-      1,
+    const numero_identificacion = req.params.numero_identificacion;
+    const citas = await citasModel.getCitasByState(
       numero_identificacion,
-      'activa',
-      date1,
-      time
+      'activa'
     );
-    res.json(citas);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error');
+    res.json(citas).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
   }
 };
 
-const getCitasConfiColaborador = async (req, res) => {
+const getCitasMedicoConfirmadas = async (req, res) => {
   try {
-    const { numero_identificacion } = req.params;
-    const date = new Date();
-    const date1 = date.toISOString().split('T')[0];
-    const time = date.toISOString().split('T')[1].split('.')[0];
-    const citas = await userModel.getCitaByState(
-      1,
+    const numero_identificacion = req.params.numero_identificacion;
+    const citas = await citasModel.getCitasByState(
       numero_identificacion,
-      'confirmada',
-      date1,
-      time
+      'confirmada'
     );
-    res.json(citas);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error');
+    res.json(citas).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
   }
 };
+
+const getCitasMecicoenCita= async (req, res) => {
+  try {
+    const numero_identificacion = req.params.numero_identificacion;
+    const citas = await citasModel.getCitasByState(
+      numero_identificacion,
+      'en cita'
+    );
+    res.json(citas).status(200);
+  }catch (error) {
+    res.json({ message: error.message }).status(500);
+  }
+}
+
+const pedirCita = async (req, res) => {
+  try {
+    const id_cita = req.params.id_cita;
+    const citaData = req.body;
+    const cita = await citasModel.getCitaById(id_cita);
+
+    if (!citaData.id_paciente) {
+      res.json({ message: 'El id_paciente es requerido' }).status(400);
+      return;
+    }
+    if (!cita) {
+      res.json({ message: 'La cita no existe' }).status(404);
+      return;
+    }
+
+    if (cita.estado !== 'sin asignar') {
+      res.json({ message: 'La cita no está disponible' }).status(400);
+      return;
+    }
+
+    const result = await citasModel.updateCita(id_cita, {
+      estado: 'activa',
+      ...citaData,
+    });
+    res.json(result).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
+  }
+};
+
+const cancelCita = async (req, res) => {
+  try {
+    const id_cita = req.params.id_cita;
+    const cita = await citasModel.getCitaById(id_cita);
+
+    if (!cita) {
+      res.json({ message: 'La cita no existe' }).status(404);
+      return;
+    }
+
+    if (cita.estado !== 'activa') {
+      res.json({ message: 'La cita no está activa' }).status(400);
+      return;
+    }
+
+    const result = await citasModel.updateCita(id_cita, {
+      estado: 'cancelada',
+    });
+
+    res.json(result).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
+  }
+};
+
 const updateCita = async (req, res) => {
   try {
-    const id = req.params.id_cita;
-    const updates = req.body;
-    const cita = await userModel.updateCita(id, updates);
+    const id_cita = req.params.id_cita;
+    const citaData = req.body;
+    const cita = await citasModel.getCitaById(id_cita);
+
     if (!cita) {
-      return res.status(404).send({ error: 'Cita not found or is disabled' });
+      res.json({ message: 'La cita no existe' }).status(404);
+      return;
     }
-    res.json(cita);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+
+    const result = await citasModel.updateCita(id_cita, citaData);
+
+    res.json(result).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
   }
 };
 
 module.exports = {
-  getCitasPaciente,
+  getCitasSinAsignar,
+  getCitasPacienteActivas,
+  getCitasActivas,
+  getCitasMedicoActivas,
+  getCitasMedicoConfirmadas,
+  getCitasMecicoenCita,
+  pedirCita,
   cancelCita,
+  updateCita,
 };

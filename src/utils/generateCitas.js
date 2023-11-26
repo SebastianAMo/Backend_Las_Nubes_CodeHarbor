@@ -119,7 +119,6 @@ const deleteCitas = async () => {
   return result.rows;
 };
 
-
 module.exports = {
   agregarCitasSiEsNecesario,
   deleteCitas,
