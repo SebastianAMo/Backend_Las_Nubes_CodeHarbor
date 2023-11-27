@@ -10,11 +10,16 @@ const {
 const authenticate = require('../middlewares/auth');
 const upload = require('../middlewares/multer');
 
-router.post('/pacientes',authenticate, addPaciente);
-router.get('/pacientes',authenticate, getAllPacientes);
-router.get('/pacientes/:numero_identificacion',authenticate, getPacienteByNumId);
+router.post('/pacientes', authenticate, addPaciente);
+router.get('/pacientes', authenticate, getAllPacientes);
+router.get(
+  '/pacientes/:numero_identificacion',
+  authenticate,
+  getPacienteByNumId
+);
 router.patch(
-  '/pacientes/:numero_identificacion',authenticate,
+  '/pacientes/:numero_identificacion',
+  authenticate,
   upload.single('foto_url'),
   updatePaciente
 );

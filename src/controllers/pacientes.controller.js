@@ -54,7 +54,7 @@ const getPacienteByNumId = async (req, res) => {
 
 const deletePaciente = async (req, res) => {
   try {
-    const id  = req.params.numero_identificacion;
+    const id = req.params.numero_identificacion;
     console.log(id);
     await pacienteModel.quitarColaboradorDePacienteEliminado(id);
     await pacienteModel.deletePaciente(id);
