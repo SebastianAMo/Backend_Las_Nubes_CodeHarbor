@@ -85,8 +85,7 @@ router.get('/verify-token', async (req, res) => {
     if (isBlacklisted.rows.length > 0)
       return res.status(401).json({ msg: 'Token is blacklisted' });
 
-    const decoded = jwt.verify(token, config.jwt_secret);
-    res.json({ msg: 'Token is valid' }, decoded).status(200);
+    res.json({ msg: 'Token is valid' }).status(200);
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
       return res.status(401).json({ msg: 'Token has expired' });
