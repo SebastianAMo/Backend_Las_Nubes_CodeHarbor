@@ -27,6 +27,19 @@ const addPaciente = async (req, res) => {
 
     res.status(201).json(paciente);
   } catch (err) {
+    if (err.code === '23505') {
+      // Error de violación de restricción de unicidad
+      if (err.detail.includes('numero_identificacion')) {
+        return res
+          .status(400)
+          .send('Ya existe un paciente con ese número de identificación.');
+      }
+      if (err.detail.includes('correo_electronico')) {
+        return res
+          .status(400)
+          .send('Ya existe un paciente con ese correo electrónico.');
+      }
+    }
     res.status(500).send(err.message);
   }
 };
