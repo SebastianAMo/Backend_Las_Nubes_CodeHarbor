@@ -13,9 +13,10 @@ const authenticate = require('../middlewares/auth');
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
+  const estate = 'active';
   try {
-    const result = await pool.query('SELECT * FROM users WHERE username = $1 and estate = active', [
-      username,
+    const result = await pool.query('SELECT * FROM users WHERE username = $1 AND estate = $2', [
+      username, estate
     ]);
     const user = result.rows[0];
     if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
