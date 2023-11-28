@@ -53,6 +53,10 @@ const getColaboradorByNumId = async (req, res) => {
     const colaborador = await adminModel.getColaboradorByNumId(
       numero_identificacion
     );
+
+    if (!colaborador) {
+      return res.status(404).send('No existe un colaborador con ese número de identificación.');
+    }
     if (colaborador.foto_url) {
       colaborador.foto_url = `${req.protocol}://${req.get('host')}/${
         colaborador.foto_url
@@ -67,6 +71,13 @@ const getColaboradorByNumId = async (req, res) => {
 const deleteColaborador = async (req, res) => {
   try {
     const { numero_identificacion } = req.params;
+    const colaborador = await adminModel.getColaboradorByNumId(
+      numero_identificacion
+    );
+
+    if (!colaborador) {
+      return res.status(404).send('No existe un colaborador con ese número de identificación.');
+    }
     await adminModel.deleteColaborador(numero_identificacion);
     await pacientesModel.reasignarPacientesDeColaborador(numero_identificacion);
 
@@ -84,6 +95,11 @@ const updateColaborador = async (req, res) => {
     const infoColaborador = await adminModel.getColaboradorByNumId(
       numero_identificacion
     );
+
+    if (!infoColaborador) {
+      return res.status(404).send('No existe un colaborador con ese número de identificación.');
+    }
+    
     const updatePhoto = await updateOneFile(
       req.file,
       'foto_url',

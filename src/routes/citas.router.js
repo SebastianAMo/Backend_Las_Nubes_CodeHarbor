@@ -22,7 +22,7 @@ router.get(
 router.get(
   '/medico/encita/:numero_identificacion',
   authenticate,
-  citasController.getCitasMecicoenCita
+  citasController.getCitasMedicoenCita
 );
 router.post('/pedir/:id_cita', citasController.pedirCita);
 router.delete('/cancelar/:id_cita', citasController.cancelCita);

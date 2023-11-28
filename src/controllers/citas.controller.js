@@ -57,7 +57,7 @@ const getCitasMedicoConfirmadas = async (req, res) => {
   }
 };
 
-const getCitasMecicoenCita = async (req, res) => {
+const getCitasMedicoenCita = async (req, res) => {
   try {
     const numero_identificacion = req.params.numero_identificacion;
     const citas = await citasModel.getCitasByState(
@@ -150,7 +150,7 @@ module.exports = {
   getCitasActivas,
   getCitasMedicoActivas,
   getCitasMedicoConfirmadas,
-  getCitasMecicoenCita,
+  getCitasMedicoenCita,
   pedirCita,
   cancelCita,
   updateCita,
