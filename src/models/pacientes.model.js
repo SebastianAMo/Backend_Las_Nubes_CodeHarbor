@@ -74,7 +74,7 @@ const asignarColaboradorAPaciente = async (numeroIdentificacionPaciente) => {
   );
 
   if (colaborador.rows.length === 0) {
-    throw new Error('No hay colaboradores disponibles para asignar');
+    return []
   }
 
   const numeroIdentificacionColaborador =

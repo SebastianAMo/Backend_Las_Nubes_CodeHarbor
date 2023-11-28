@@ -78,6 +78,8 @@ const deleteColaborador = async (req, res) => {
     if (!colaborador) {
       return res.status(404).send('No existe un colaborador con ese número de identificación.');
     }
+
+    await colaboradoresModel.disabledUser(colaborador.usuario_id)
     await adminModel.deleteColaborador(numero_identificacion);
     await pacientesModel.reasignarPacientesDeColaborador(numero_identificacion);
 
