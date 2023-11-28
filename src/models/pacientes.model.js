@@ -98,7 +98,7 @@ const reasignarPacientesDeColaborador = async (
   );
 
   if (pacientes.rows.length === 0) {
-    throw new Error('No hay pacientes asignados a este colaborador');
+    return true;
   }
 
   for (const paciente of pacientes.rows) {
