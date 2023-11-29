@@ -29,6 +29,14 @@ CREATE TABLE "colaboradores" (
   "deleted_at" TIMESTAMP
 );
 
+CREATE TABLE asignaciones_colaboradores (
+    id SERIAL PRIMARY KEY,
+    id_colaborador_principal INTEGER NOT NULL,
+    id_colaborador_asignado INTEGER NOT NULL,
+    FOREIGN KEY (id_colaborador_principal) REFERENCES colaboradores(numero_identificacion),
+    FOREIGN KEY (id_colaborador_asignado) REFERENCES colaboradores(numero_identificacion)
+);
+
 CREATE TABLE "pacientes" (
   "id" SERIAL PRIMARY KEY,
   "tipo_identificacion" varchar,
