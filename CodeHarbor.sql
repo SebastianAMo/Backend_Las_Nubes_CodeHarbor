@@ -29,6 +29,14 @@ CREATE TABLE "colaboradores" (
   "deleted_at" TIMESTAMP
 );
 
+CREATE TABLE asignaciones_colaboradores (
+    id SERIAL PRIMARY KEY,
+    id_colaborador_principal INTEGER NOT NULL,
+    id_colaborador_asignado INTEGER NOT NULL,
+    FOREIGN KEY (id_colaborador_principal) REFERENCES colaboradores(numero_identificacion),
+    FOREIGN KEY (id_colaborador_asignado) REFERENCES colaboradores(numero_identificacion)
+);
+
 CREATE TABLE "pacientes" (
   "id" SERIAL PRIMARY KEY,
   "tipo_identificacion" varchar,
@@ -41,6 +49,7 @@ CREATE TABLE "pacientes" (
   "direccion" varchar,
   "telefono" varchar,
   "correo_electronico" varchar UNIQUE,
+  "colaborador_encargado" integer,
   "usuario_id" integer,
   "updated_at" TIMESTAMP,
   "is_deleted" BOOLEAN DEFAULT FALSE,
@@ -76,7 +85,7 @@ CREATE TABLE "formulas_medicas" (
 CREATE TABLE "medicamentos_recetados" (
   "id" SERIAL PRIMARY KEY,
   "id_formula_medica" integer,
-  "medicamento_id" integer,
+  "id_medicamento" integer,
   "cantidad" integer,
   "prescripcion" text
 );
@@ -85,9 +94,13 @@ CREATE TABLE "citas_medicas" (
   "id_cita" SERIAL PRIMARY KEY,
   "fecha" date,
   "hora" time,
-  "colaborador_id" integer,
+  "id_colaborador" integer,
   "id_paciente" integer,
-  "estado" varchar
+  "eps" varchar,
+  "estado" varchar,
+  "motivo_consulta" text,
+  "diagnostico_consulta" text,
+  "tratamiento_consulta" text
 );
 
 CREATE TABLE "entrada_pacientes" (
@@ -98,16 +111,26 @@ CREATE TABLE "entrada_pacientes" (
 );
 
 CREATE TABLE "historias_clinicas" (
-  "id_Historia" SERIAL PRIMARY KEY,
-  "id_Colaborador" integer,
-  "id_Paciente" integer,
-  "antecedentes_personales" text,
+  "id_historia" SERIAL PRIMARY KEY,
+  "id_colaborador" integer,
+  "id_paciente" integer,
   "ciclo_menstrual" varchar,
   "enfermedades_familiares" text,
   "enfermedades_personales" text,
-  "motivo_consulta" text,
-  "diagnostico_consulta" text,
-  "tratamiento_consulta" text
+  "fecha_generacion" timestamp
+);
+
+CREATE TABLE "antecedentes_personales"(
+  "id" SERIAL PRIMARY KEY,
+  "id_historia_clinica" INTEGER NOT NULL,
+  "tabaco" VARCHAR,
+  "alcohol" VARCHAR,
+  "drogas" VARCHAR,
+  "infusiones" VARCHAR,
+  "alimentacion" VARCHAR,
+  "sexualidad" VARCHAR,
+  "sueno" VARCHAR,
+  FOREIGN KEY ("id_historia_clinica") REFERENCES "historias_clinicas"("id_historia")
 );
 
 CREATE TABLE "solicitudes" (
@@ -116,8 +139,6 @@ CREATE TABLE "solicitudes" (
   "id_medicamento_recetado" integer
 );
 
-
--- Crear la tabla para almacenar los tokens en la lista negra
 CREATE TABLE IF NOT EXISTS blacklisted_tokens (
   id SERIAL PRIMARY KEY,
   token VARCHAR(500) NOT NULL,
@@ -137,18 +158,19 @@ COMMENT ON TABLE "historias_clinicas" IS 'Contiene la información detallada de 
 COMMENT ON TABLE "solicitudes" IS 'Almacena información sobre las solicitudes de medicamentos de alto costo';
 
 ALTER TABLE "solicitudes" ADD FOREIGN KEY ("id_medicamento_recetado") REFERENCES "medicamentos_recetados" ("id");
-ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_Paciente") REFERENCES "pacientes" ("id");
-ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_Colaborador") REFERENCES "colaboradores" ("id");
+ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
+ALTER TABLE "historias_clinicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
 ALTER TABLE "colaboradores" ADD FOREIGN KEY ("usuario_id") REFERENCES "users" ("id");
 ALTER TABLE "pacientes" ADD FOREIGN KEY ("usuario_id") REFERENCES "users" ("id");
+ALTER TABLE "pacientes" ADD FOREIGN KEY ("colaborador_encargado") REFERENCES "colaboradores" ("numero_identificacion");
 ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_formula_medica") REFERENCES "formulas_medicas" ("id");
-ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("medicamento_id") REFERENCES "medicamentos" ("id");
-ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
-ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("id");
-ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("colaborador_id") REFERENCES "colaboradores" ("id");
-ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
-ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("id");
-ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("secretario_id") REFERENCES "colaboradores" ("id");
+ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_medicamento") REFERENCES "medicamentos" ("id");
+ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
+ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
+ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
+ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
+ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
+ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("secretario_id") REFERENCES "colaboradores" ("numero_identificacion");
 
 ALTER TABLE "colaboradores" ADD COLUMN "foto_url" VARCHAR;
 ALTER TABLE "pacientes" ADD COLUMN "foto_url" VARCHAR;

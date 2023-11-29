@@ -5,10 +5,10 @@ services:
     image: postgres:16
     environment:
       POSTGRES_DB: BD_Las_Nubes
-      POSTGRES_USER: ${POSTGRES_USER:-test}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-test}
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
     ports:
-      - "5432:5432"
+      - "3000"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
