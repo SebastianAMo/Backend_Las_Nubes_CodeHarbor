@@ -22,6 +22,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
+app.get('/api', async (req, res) => {
+  await agregarCitasSiEsNecesario();
+  await deleteCitas();
+  res.send('Hello World!');
+}
+);
+
 cron.schedule('0 0 * * *', async () => {
   console.log('Ejecutando la tarea de generación de citas a medianoche');
   try {
