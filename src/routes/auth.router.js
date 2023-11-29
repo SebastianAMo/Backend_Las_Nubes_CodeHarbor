@@ -13,9 +13,10 @@ const authenticate = require('../middlewares/auth');
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
+  const estate = 'active';
   try {
-    const result = await pool.query('SELECT * FROM users WHERE username = $1', [
-      username,
+    const result = await pool.query('SELECT * FROM users WHERE username = $1 AND estate = $2', [
+      username, estate
     ]);
     const user = result.rows[0];
     if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
@@ -85,7 +86,9 @@ router.get('/verify-token', async (req, res) => {
     if (isBlacklisted.rows.length > 0)
       return res.status(401).json({ msg: 'Token is blacklisted' });
 
-    const decoded = jwt.verify(token, config.jwt_secret);
+
+    jwt.verify(token, config.jwt_secret);
+
     res.json({ msg: 'Token is valid' }).status(200);
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {

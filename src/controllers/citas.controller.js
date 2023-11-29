@@ -30,6 +30,16 @@ const getCitasActivas = async (req, res) => {
   }
 };
 
+const getCitasEnfermero = async (req, res) => {
+  try {
+    const numero_identificacion = req.params.numero_identificacion;
+    const citas = await citasModel.getCitasEnfermero(numero_identificacion);
+    res.json(citas).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
+  }
+}
+
 //La consulta del medico para ver sus citas activas pendientes del día actual
 const getCitasMedicoActivas = async (req, res) => {
   try {
@@ -57,7 +67,7 @@ const getCitasMedicoConfirmadas = async (req, res) => {
   }
 };
 
-const getCitasMecicoenCita = async (req, res) => {
+const getCitasMedicoenCita = async (req, res) => {
   try {
     const numero_identificacion = req.params.numero_identificacion;
     const citas = await citasModel.getCitasByState(
@@ -150,7 +160,8 @@ module.exports = {
   getCitasActivas,
   getCitasMedicoActivas,
   getCitasMedicoConfirmadas,
-  getCitasMecicoenCita,
+  getCitasMedicoenCita,
+  getCitasEnfermero,
   pedirCita,
   cancelCita,
   updateCita,

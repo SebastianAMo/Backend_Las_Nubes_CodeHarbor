@@ -25,6 +25,15 @@ const addColaborador = async (req, res) => {
 
     res.status(201).json(colaborador);
   } catch (err) {
+    if (err.code === '23505') {
+      // Error de violación de restricción de unicidad
+      if (err.detail.includes('numero_identificacion')) {
+        return res.status(400).send('Ya existe un colaborador con ese número de identificación.');
+      }
+      if (err.detail.includes('correo_electronico')) {
+        return res.status(400).send('Ya existe un colaborador con ese correo electrónico.');
+      }
+    }
     res.status(500).send(err.message);
   }
 };
@@ -44,6 +53,10 @@ const getColaboradorByNumId = async (req, res) => {
     const colaborador = await adminModel.getColaboradorByNumId(
       numero_identificacion
     );
+
+    if (!colaborador) {
+      return res.status(404).send('No existe un colaborador con ese número de identificación.');
+    }
     if (colaborador.foto_url) {
       colaborador.foto_url = `${req.protocol}://${req.get('host')}/${
         colaborador.foto_url
@@ -58,9 +71,18 @@ const getColaboradorByNumId = async (req, res) => {
 const deleteColaborador = async (req, res) => {
   try {
     const { numero_identificacion } = req.params;
+    const colaborador = await adminModel.getColaboradorByNumId(
+      numero_identificacion
+    );
+
+    if (!colaborador) {
+      return res.status(404).send('No existe un colaborador con ese número de identificación.');
+    }
+
+    await colaboradoresModel.disabledUser(colaborador.usuario_id)
     await adminModel.deleteColaborador(numero_identificacion);
-    await pacientesModel.reasignarPacientesDeColaborador( numero_identificacion);
-    
+    await pacientesModel.reasignarPacientesDeColaborador(numero_identificacion);
+
     res.json({ message: 'Colaborador eliminado' });
   } catch (err) {
     res.status(500).send(err.message);
@@ -75,6 +97,11 @@ const updateColaborador = async (req, res) => {
     const infoColaborador = await adminModel.getColaboradorByNumId(
       numero_identificacion
     );
+
+    if (!infoColaborador) {
+      return res.status(404).send('No existe un colaborador con ese número de identificación.');
+    }
+    
     const updatePhoto = await updateOneFile(
       req.file,
       'foto_url',

@@ -29,6 +29,14 @@ CREATE TABLE "colaboradores" (
   "deleted_at" TIMESTAMP
 );
 
+CREATE TABLE asignaciones_colaboradores (
+    id SERIAL PRIMARY KEY,
+    id_colaborador_principal INTEGER NOT NULL,
+    id_colaborador_asignado INTEGER NOT NULL,
+    FOREIGN KEY (id_colaborador_principal) REFERENCES colaboradores(numero_identificacion),
+    FOREIGN KEY (id_colaborador_asignado) REFERENCES colaboradores(numero_identificacion)
+);
+
 CREATE TABLE "pacientes" (
   "id" SERIAL PRIMARY KEY,
   "tipo_identificacion" varchar,
@@ -86,8 +94,9 @@ CREATE TABLE "citas_medicas" (
   "id_cita" SERIAL PRIMARY KEY,
   "fecha" date,
   "hora" time,
-  "id_colaborador" integer,
+  "id_medico" integer,
   "id_paciente" integer,
+  "id_enfermero" integer,
   "eps" varchar,
   "estado" varchar,
   "motivo_consulta" text,
@@ -159,7 +168,8 @@ ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_formula_medica") REFER
 ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_medicamento") REFERENCES "medicamentos" ("id");
 ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
 ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
-ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
+ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_medico") REFERENCES "colaboradores" ("numero_identificacion");
+ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_enfermera") REFERENCES "colaboradores" ("numero_identificacion");
 ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
 ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
 ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("secretario_id") REFERENCES "colaboradores" ("numero_identificacion");
