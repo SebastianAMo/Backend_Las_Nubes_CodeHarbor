@@ -24,6 +24,12 @@ router.get(
   authenticate,
   citasController.getCitasMedicoenCita
 );
+router.get(
+  '/enfermero/:numero_identificacion',
+
+  citasController.getCitasEnfermero
+);
+
 router.post('/pedir/:id_cita', citasController.pedirCita);
 router.delete('/cancelar/:id_cita', citasController.cancelCita);
 router.patch('/update/:id_cita', citasController.updateCita);

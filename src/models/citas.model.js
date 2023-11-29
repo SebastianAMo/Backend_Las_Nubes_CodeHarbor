@@ -6,7 +6,7 @@ const getCitasSinAsignar = async () => {
   const query = `
         SELECT cm.id_cita, cm.fecha, cm.hora, c.nombre, c.apellido, c.especialidad
         FROM citas_medicas cm
-        JOIN colaboradores c ON cm.id_colaborador = c.numero_identificacion
+        JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
         WHERE cm.estado = 'sin asignar' 
               AND c.jerarquia = 'Médico' 
               AND cm.fecha > $1;
@@ -23,7 +23,7 @@ const getCitaById = async (id_cita) => {
             c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
      FROM citas_medicas cm
      LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
-     JOIN colaboradores c ON cm.id_colaborador = c.numero_identificacion
+     JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
      WHERE cm.id_cita = $1`,
     [id_cita]
   );
@@ -37,7 +37,7 @@ const getCitasPacienteActivas = async (numero_identificacion) => {
               c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
        FROM citas_medicas cm
        JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
-       JOIN colaboradores c ON cm.id_colaborador = c.numero_identificacion
+       JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
        WHERE cm.id_paciente = $1 AND cm.estado = 'activa'`,
     [numero_identificacion]
   );
@@ -52,12 +52,28 @@ const getCitasByState = async (numero_identificacion, state) => {
               c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
        FROM citas_medicas cm
        LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
-       LEFT JOIN colaboradores c ON cm.id_colaborador = c.numero_identificacion
-       WHERE (cm.id_paciente = $1 OR cm.id_colaborador = $1) AND cm.estado = $2 AND cm.fecha = $3`,
+       LEFT JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
+       WHERE (cm.id_paciente = $1 OR cm.id_medico = $1) AND cm.estado = $2 AND cm.fecha = $3`,
     [numero_identificacion, state, currentDate]
   );
   return result.rows;
 };
+
+// Consulta las citas del dia de un enfermero en especifico con información del medicos y paciente
+const getCitasEnfermero = async (numero_identificacion) => { 
+  const currentDate = new Date();
+  const result = await pool.query(
+    `SELECT cm.*, 
+              p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
+              c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
+       FROM citas_medicas cm
+       LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
+       LEFT JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
+       WHERE cm.id_enfermero = $1 AND cm.fecha = $2`,
+    [numero_identificacion, currentDate]
+  );
+  return result.rows;
+}
 
 // Cancela una cita médica
 const cancelCita = async (numero_identificacion) => {
@@ -77,8 +93,8 @@ const getCitasActivas = async () => {
               c.nombre AS nombre_medico, c.apellido AS apellido_medico, c.especialidad
        FROM citas_medicas cm
        LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
-       LEFT JOIN colaboradores c ON cm.id_colaborador = c.numero_identificacion
-       WHERE cm.estado = 'activa' AND cm.fecha = $1`,
+       LEFT JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
+       WHERE cm.fecha = $1`,
     [currentDate]
   );
   return result.rows;
@@ -103,6 +119,7 @@ module.exports = {
   getCitasPacienteActivas,
   getCitasByState,
   getCitaById,
+  getCitasEnfermero,
   cancelCita,
   getCitasActivas,
   updateCita,

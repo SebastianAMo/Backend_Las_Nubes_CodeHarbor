@@ -9,7 +9,7 @@ const {
 const upload = require('../middlewares/multer');
 const authenticate = require('../middlewares/auth');
 
-router.post('/colaboradores/', authenticate, addColaborador);
+router.post('/colaboradores/', addColaborador);
 router.get('/colaboradores/', authenticate, getAllColaboradores);
 router.get(
   '/colaboradores/:numero_identificacion',
