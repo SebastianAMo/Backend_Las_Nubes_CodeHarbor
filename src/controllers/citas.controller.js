@@ -38,7 +38,7 @@ const getCitasEnfermero = async (req, res) => {
   } catch (error) {
     res.json({ message: error.message }).status(500);
   }
-}
+};
 
 //La consulta del medico para ver sus citas activas pendientes del día actual
 const getCitasMedicoActivas = async (req, res) => {

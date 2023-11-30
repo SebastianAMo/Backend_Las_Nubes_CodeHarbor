@@ -15,9 +15,10 @@ router.post('/login', async (req, res) => {
 
   const estate = 'active';
   try {
-    const result = await pool.query('SELECT * FROM users WHERE username = $1 AND estate = $2', [
-      username, estate
-    ]);
+    const result = await pool.query(
+      'SELECT * FROM users WHERE username = $1 AND estate = $2',
+      [username, estate]
+    );
     const user = result.rows[0];
     if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
 
@@ -85,7 +86,6 @@ router.get('/verify-token', async (req, res) => {
     );
     if (isBlacklisted.rows.length > 0)
       return res.status(401).json({ msg: 'Token is blacklisted' });
-
 
     jwt.verify(token, config.jwt_secret);
 

@@ -41,7 +41,11 @@ const deletePaciente = async (numero_identificacion) => {
   const state = true;
   const result = await pool.query(
     'UPDATE pacientes SET is_deleted = $1, deleted_at = $2 WHERE numero_identificacion = $3 RETURNING *',
-    [state, new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }), numero_identificacion]
+    [
+      state,
+      new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }),
+      numero_identificacion,
+    ]
   );
   return result.rows[0];
 };
@@ -49,7 +53,9 @@ const deletePaciente = async (numero_identificacion) => {
 const updatePaciente = async (numero_identificacion, updateFields) => {
   const keys = Object.keys(updateFields);
   const values = keys.map((key) => updateFields[key]);
-  const updateTimestamp = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  const updateTimestamp = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Bogota',
+  });
   keys.push('updated_at');
   values.push(updateTimestamp);
   const setString = keys
@@ -74,7 +80,7 @@ const asignarColaboradorAPaciente = async (numeroIdentificacionPaciente) => {
   );
 
   if (colaborador.rows.length === 0) {
-    return []
+    return [];
   }
 
   const numeroIdentificacionColaborador =
@@ -98,7 +104,7 @@ const reasignarPacientesDeColaborador = async (
   );
 
   if (pacientes.rows.length === 0) {
-    return false;
+    return true;
   }
 
   for (const paciente of pacientes.rows) {

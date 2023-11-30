@@ -11,7 +11,7 @@ function agregarDatos(doc, clave, valor) {
     });
   } else {
     doc.fontSize(14).text(clave, { underline: true });
-    if(valor === undefined || valor === null) valor = 'No disponible';
+    if (valor === undefined || valor === null) valor = 'No disponible';
     doc.fontSize(12).text(valor.toString(), { indent: 20 });
   }
   doc.moveDown(1.0);
