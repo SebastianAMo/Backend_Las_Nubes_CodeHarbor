@@ -61,8 +61,10 @@ const getCitasByState = async (numero_identificacion, state) => {
 };
 
 // Consulta las citas del dia de un enfermero en especifico con información del medicos y paciente
-const getCitasEnfermero = async (numero_identificacion) => { 
-  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+const getCitasEnfermero = async (numero_identificacion) => {
+  const currentDate = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Bogota',
+  });
   const result = await pool.query(
     `SELECT cm.*, 
               p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
@@ -74,7 +76,7 @@ const getCitasEnfermero = async (numero_identificacion) => {
     [numero_identificacion, currentDate]
   );
   return result.rows;
-}
+};
 
 // Cancela una cita médica
 const cancelCita = async (numero_identificacion) => {

@@ -60,7 +60,9 @@ const getPacienteByNumId = async (req, res) => {
       numero_identificacion
     );
     if (!paciente) {
-      return res.status(404).send('No existe un paciente con ese número de identificación.');
+      return res
+        .status(404)
+        .send('No existe un paciente con ese número de identificación.');
     }
     res.json(paciente);
   } catch (err) {
@@ -73,7 +75,9 @@ const deletePaciente = async (req, res) => {
     const id = req.params.numero_identificacion;
     const paciente = await pacienteModel.getPacienteByNumId(id);
     if (!paciente) {
-      return res.status(404).send('No existe un paciente con ese número de identificación.');
+      return res
+        .status(404)
+        .send('No existe un paciente con ese número de identificación.');
     }
     await pacienteModel.quitarColaboradorDePacienteEliminado(id);
     await pacienteModel.deletePaciente(id);
@@ -91,7 +95,9 @@ const updatePaciente = async (req, res) => {
       numero_identificacion
     );
     if (!infPaciente) {
-      return res.status(404).send('No existe un paciente con ese número de identificación.');
+      return res
+        .status(404)
+        .send('No existe un paciente con ese número de identificación.');
     }
     const updatePhoto = await updateOneFile(req.file, 'foto_url', infPaciente);
 

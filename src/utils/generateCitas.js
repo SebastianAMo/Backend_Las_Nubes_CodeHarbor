@@ -16,7 +16,6 @@ const getEnfermeros = async () => {
   return result.rows.map((row) => row.numero_identificacion);
 };
 
-
 // Función para obtener la última fecha de cita programada para un médico
 const getLastCita = async (numero_identificacion) => {
   const result = await pool.query(
@@ -40,11 +39,16 @@ const createCita = async (citaData) => {
   const result = await pool.query(
     `INSERT INTO citas_medicas (id_medico, id_enfermero, fecha, hora, estado) 
          VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-    [citaData.id_medico, citaData.id_enfermero, citaData.fecha, citaData.hora, estado]
+    [
+      citaData.id_medico,
+      citaData.id_enfermero,
+      citaData.fecha,
+      citaData.hora,
+      estado,
+    ]
   );
   return result.rows[0];
 };
-
 
 const addDaysSkippingWeekends = (startDate, daysToAdd) => {
   let currentDate = new Date(startDate);
@@ -99,14 +103,29 @@ const asignarEnfermeraACita = async (fecha, hora, enfermeros) => {
 
 const programarCitasParaMedico = async (numero_identificacion, enfermeros) => {
   let ultimaFechaCita = await getLastCita(numero_identificacion);
-  let fechaCita = new Date(ultimaFechaCita < new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }) ? addDaysSkippingWeekends(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }), 1) : ultimaFechaCita);
+  let fechaCita = new Date(
+    ultimaFechaCita <
+    new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' })
+      ? addDaysSkippingWeekends(
+          new Date().toLocaleDateString('en-CA', {
+            timeZone: 'America/Bogota',
+          }),
+          1
+        )
+      : ultimaFechaCita
+  );
   let diasFaltantes = 10;
 
   while (diasFaltantes > 0) {
-    if (fechaCita.getDay() !== 0) { // 0 es Domingo
+    if (fechaCita.getDay() !== 0) {
+      // 0 es Domingo
       const horarios = generarHorarios();
       for (const hora of horarios) {
-        const idEnfermeroAsignado = await asignarEnfermeraACita(fechaCita.toISOString().split('T')[0], hora, enfermeros);
+        const idEnfermeroAsignado = await asignarEnfermeraACita(
+          fechaCita.toISOString().split('T')[0],
+          hora,
+          enfermeros
+        );
         await createCita({
           id_medico: numero_identificacion,
           id_enfermero: idEnfermeroAsignado,

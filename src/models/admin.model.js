@@ -43,14 +43,20 @@ const getColaboradorByNumId = async (numero_identificacion) => {
 const deleteColaborador = async (numero_identificacion) => {
   await pool.query(
     'UPDATE colaboradores SET is_deleted = $1, deleted_at = $2 WHERE numero_identificacion = $3',
-    [true, new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }), numero_identificacion]
+    [
+      true,
+      new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }),
+      numero_identificacion,
+    ]
   );
 };
 
 const updateColaborador = async (numero_identificacion, updateFields) => {
   const keys = Object.keys(updateFields);
   const values = keys.map((key) => updateFields[key]);
-  const updateTimestamp = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  const updateTimestamp = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Bogota',
+  });
   keys.push('updated_at');
   values.push(updateTimestamp);
 
