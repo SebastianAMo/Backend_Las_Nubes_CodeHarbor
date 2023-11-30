@@ -3,6 +3,10 @@ const router = express.Router();
 const citasController = require('../controllers/citas.controller');
 const authenticate = require('../middlewares/auth');
 
+router.get('/especialidades', citasController.getEspecialidades);
+router.get('/medicos/:especialidad', citasController.getCitasMedicos);
+router.get('/medico/:id_medico', citasController.getCitasMedico);
+
 router.get('/sinasignar', citasController.getCitasSinAsignar);
 router.get(
   '/paciente/activas/:numero_identificacion',

@@ -1,5 +1,49 @@
 const citasModel = require('../models/citas.model');
 
+const getEspecialidades = async (req, res) => {
+  try {
+    const especialidades = await citasModel.getEspecialidades();
+    if (especialidades.length === 0) {
+      res.json({ message: 'No hay especialidades disponibles' }).status(404);
+      return;
+    }
+    res.json(especialidades).status(200);
+  }
+  catch (error) {
+    res.json({ message: error.message }).status(500);
+  }
+};
+
+const getCitasMedicos = async (req, res) => {
+  try {
+    const especialidad = req.params.especialidad;
+    const citas = await citasModel.getCitasMedicos(especialidad);
+    if (citas.length === 0) {
+      res.json({ message: 'No hay citas disponibles' }).status(404);
+      return;
+    }
+    res.json(citas).status(200);
+  }
+  catch (error) {
+    res.json({ message: error.message }).status(500);
+  }
+}
+
+const getCitasMedico = async (req, res) => {
+  try {
+    const id_medico = req.params.id_medico;
+    const citas = await citasModel.getCitasMedico(id_medico);
+    if (citas.length === 0) {
+      res.json({ message: 'No hay citas disponibles' }).status(404);
+      return;
+    }
+    res.json(citas).status(200);
+  }
+  catch (error) {
+    res.json({ message: error.message }).status(500);
+  }
+};
+
 const getCitasSinAsignar = async (req, res) => {
   try {
     const citas = await citasModel.getCitasSinAsignar();
@@ -155,6 +199,9 @@ const updateCita = async (req, res) => {
 };
 
 module.exports = {
+  getEspecialidades,
+  getCitasMedicos,
+  getCitasMedico,
   getCitasSinAsignar,
   getCitasPacienteActivas,
   getCitasActivas,
