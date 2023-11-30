@@ -1,13 +1,14 @@
 const pool = require('../../config/dbConfig');
 
 const getCitasSinAsignar = async () => {
-  const currentDate = new Date().toISOString().split('T')[0]; // Formato 'YYYY-MM-DD'
+  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  
 
   const query = `
         SELECT cm.id_cita, cm.fecha, cm.hora, c.nombre, c.apellido, c.especialidad
         FROM citas_medicas cm
         JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
-        WHERE cm.estado = 'sin asignar' 
+        WHERE cm.estado = 'Sin asignar' 
               AND c.jerarquia = 'Médico' 
               AND cm.fecha > $1;
     `;
@@ -38,14 +39,14 @@ const getCitasPacienteActivas = async (numero_identificacion) => {
        FROM citas_medicas cm
        JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
        JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
-       WHERE cm.id_paciente = $1 AND cm.estado = 'activa'`,
+       WHERE cm.id_paciente = $1 AND cm.estado = 'Activa'`,
     [numero_identificacion]
   );
   return result.rows;
 };
 
 const getCitasByState = async (numero_identificacion, state) => {
-  const currentDate = new Date().toISOString().split('T')[0];
+  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
   const result = await pool.query(
     `SELECT cm.*, 
               p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
@@ -61,7 +62,7 @@ const getCitasByState = async (numero_identificacion, state) => {
 
 // Consulta las citas del dia de un enfermero en especifico con información del medicos y paciente
 const getCitasEnfermero = async (numero_identificacion) => { 
-  const currentDate = new Date();
+  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
   const result = await pool.query(
     `SELECT cm.*, 
               p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
@@ -84,9 +85,10 @@ const cancelCita = async (numero_identificacion) => {
   return result.rows[0];
 };
 
-// Get citas with state 'activa' and date = today
+// Get citas with state 'Activa' and date = today
 const getCitasActivas = async () => {
-  const currentDate = new Date().toISOString().split('T')[0];
+  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  console.log(currentDate); 
   const result = await pool.query(
     `SELECT cm.*, 
               p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,

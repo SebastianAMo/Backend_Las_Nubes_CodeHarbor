@@ -46,7 +46,7 @@ const getCitasMedicoActivas = async (req, res) => {
     const numero_identificacion = req.params.numero_identificacion;
     const citas = await citasModel.getCitasByState(
       numero_identificacion,
-      'activa'
+      'Activa'
     );
     res.json(citas).status(200);
   } catch (error) {
@@ -59,7 +59,7 @@ const getCitasMedicoConfirmadas = async (req, res) => {
     const numero_identificacion = req.params.numero_identificacion;
     const citas = await citasModel.getCitasByState(
       numero_identificacion,
-      'confirmada'
+      'Confirmada'
     );
     res.json(citas).status(200);
   } catch (error) {
@@ -72,7 +72,7 @@ const getCitasMedicoenCita = async (req, res) => {
     const numero_identificacion = req.params.numero_identificacion;
     const citas = await citasModel.getCitasByState(
       numero_identificacion,
-      'en cita'
+      'En cita'
     );
     res.json(citas).status(200);
   } catch (error) {
@@ -95,13 +95,13 @@ const pedirCita = async (req, res) => {
       return;
     }
 
-    if (cita.estado !== 'sin asignar') {
+    if (cita.estado !== 'Sin asignar') {
       res.json({ message: 'La cita no está disponible' }).status(400);
       return;
     }
 
     const result = await citasModel.updateCita(id_cita, {
-      estado: 'activa',
+      estado: 'Activa',
       ...citaData,
     });
     res.json(result).status(200);
@@ -120,13 +120,13 @@ const cancelCita = async (req, res) => {
       return;
     }
 
-    if (cita.estado !== 'activa') {
+    if (cita.estado !== 'Activa') {
       res.json({ message: 'La cita no está activa' }).status(400);
       return;
     }
 
     const result = await citasModel.updateCita(id_cita, {
-      estado: 'cancelada',
+      estado: 'Cancelada',
     });
 
     res.json(result).status(200);

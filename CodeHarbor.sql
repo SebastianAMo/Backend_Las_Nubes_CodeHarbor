@@ -169,7 +169,7 @@ ALTER TABLE "medicamentos_recetados" ADD FOREIGN KEY ("id_medicamento") REFERENC
 ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
 ALTER TABLE "formulas_medicas" ADD FOREIGN KEY ("id_colaborador") REFERENCES "colaboradores" ("numero_identificacion");
 ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_medico") REFERENCES "colaboradores" ("numero_identificacion");
-ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_enfermera") REFERENCES "colaboradores" ("numero_identificacion");
+ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_enfermero") REFERENCES "colaboradores" ("numero_identificacion");
 ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
 ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
 ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("secretario_id") REFERENCES "colaboradores" ("numero_identificacion");
