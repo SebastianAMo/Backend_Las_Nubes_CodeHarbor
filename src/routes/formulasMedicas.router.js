@@ -4,5 +4,8 @@ const formulasMedicasController = require('../controllers/formulasMedicas.contro
 
 // Corregir aquí: Cambiar 'formulasMedicasController.formulasMedicasController' a 'formulasMedicasController.createFormulaMedica'
 router.post('/formulas-medicas', formulasMedicasController.createFormulaMedica);
-router.get('/formulas-medicas/paciente/:id', formulasMedicasController.getFormulasMedicasByPaciente);
+router.get(
+  '/formulas-medicas/paciente/:id',
+  formulasMedicasController.getFormulasMedicasByPaciente
+);
 module.exports = router;

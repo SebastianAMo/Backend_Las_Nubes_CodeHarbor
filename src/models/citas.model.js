@@ -1,8 +1,9 @@
 const pool = require('../../config/dbConfig');
 
 const getCitasSinAsignar = async () => {
-  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
-  
+  const currentDate = new Date()
+    .toLocaleDateString('en-CA', { timeZone: 'America/Bogota' })
+    .toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
 
   const query = `
         SELECT cm.id_cita, cm.fecha, cm.hora, c.nombre, c.apellido, c.especialidad
@@ -46,7 +47,9 @@ const getCitasPacienteActivas = async (numero_identificacion) => {
 };
 
 const getCitasByState = async (numero_identificacion, state) => {
-  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  const currentDate = new Date()
+    .toLocaleDateString('en-CA', { timeZone: 'America/Bogota' })
+    .toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
   const result = await pool.query(
     `SELECT cm.*, 
               p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
@@ -61,8 +64,10 @@ const getCitasByState = async (numero_identificacion, state) => {
 };
 
 // Consulta las citas del dia de un enfermero en especifico con información del medicos y paciente
-const getCitasEnfermero = async (numero_identificacion) => { 
-  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+const getCitasEnfermero = async (numero_identificacion) => {
+  const currentDate = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Bogota',
+  });
   const result = await pool.query(
     `SELECT cm.*, 
               p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
@@ -74,7 +79,7 @@ const getCitasEnfermero = async (numero_identificacion) => {
     [numero_identificacion, currentDate]
   );
   return result.rows;
-}
+};
 
 // Cancela una cita médica
 const cancelCita = async (numero_identificacion) => {
@@ -87,8 +92,10 @@ const cancelCita = async (numero_identificacion) => {
 
 // Get citas with state 'Activa' and date = today
 const getCitasActivas = async () => {
-  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
-  console.log(currentDate); 
+  const currentDate = new Date()
+    .toLocaleDateString('en-CA', { timeZone: 'America/Bogota' })
+    .toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  console.log(currentDate);
   const result = await pool.query(
     `SELECT cm.*, 
               p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,

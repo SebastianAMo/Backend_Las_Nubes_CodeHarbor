@@ -4,7 +4,9 @@ const bcrypt = require('bcryptjs');
 const createUser = async (userData) => {
   const { username, password, role } = userData;
   const estate = 'active';
-  const createdAt = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  const createdAt = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/Bogota',
+  });
   const hashedPassword = await bcrypt.hash(password, 10);
   const result = await pool.query(
     'INSERT INTO users (username, password, role, estate, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, role, created_at, estate',
