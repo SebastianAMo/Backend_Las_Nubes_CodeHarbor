@@ -10,7 +10,7 @@ const addPaciente = async (req, res) => {
     const userCreationResponse = await createUser({
       username: pacienteData.numero_identificacion,
       password: pacienteData.numero_identificacion,
-      role: 'paciente',
+      role: 'Paciente',
     });
 
     if (userCreationResponse) {
