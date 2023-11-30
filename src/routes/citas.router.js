@@ -1,20 +1,37 @@
 const express = require('express');
 const router = express.Router();
+const citasController = require('../controllers/citas.controller');
+const authenticate = require('../middlewares/auth');
 
-router.post('/citas', (req, res) => {
-    res.send('Endpoint para solicitar una cita médica');
-});
+router.get('/sinasignar', citasController.getCitasSinAsignar);
+router.get(
+  '/paciente/activas/:numero_identificacion',
+  citasController.getCitasPacienteActivas
+);
+router.get('/activas', authenticate, citasController.getCitasActivas);
+router.get(
+  '/medico/activas/:numero_identificacion',
+  authenticate,
+  citasController.getCitasMedicoActivas
+);
+router.get(
+  '/medico/confirmadas/:numero_identificacion',
+  authenticate,
+  citasController.getCitasMedicoConfirmadas
+);
+router.get(
+  '/medico/encita/:numero_identificacion',
+  authenticate,
+  citasController.getCitasMedicoenCita
+);
+router.get(
+  '/enfermero/:numero_identificacion',
 
-router.get('/citas', (req, res) => {
-    res.send('Endpoint para consultar todas las citas médicas');
-});
+  citasController.getCitasEnfermero
+);
 
-router.get('/citas/:id', (req, res) => {
-    res.send(`Endpoint para consultar la cita médica con ID ${req.params.id}`);
-});
-
-router.delete('/citas/:id', (req, res) => {
-    res.send(`Endpoint para cancelar la cita médica con ID ${req.params.id}`);
-});
+router.post('/pedir/:id_cita', citasController.pedirCita);
+router.delete('/cancelar/:id_cita', citasController.cancelCita);
+router.patch('/update/:id_cita', citasController.updateCita);
 
 module.exports = router;

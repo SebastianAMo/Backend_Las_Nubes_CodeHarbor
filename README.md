@@ -43,16 +43,45 @@ El proyecto incluye un archivo docker-compose.yml para la base de datos PostgreS
 docker-compose up -d
 ```
 
-### 5. Inicializar la Base de Datos
+### 5. Obtener IP de la Base de Datos
 
-Usando pgadmin o directamente por consola debes usar el .sql para crear las tablas necesarias
+Usa docker ps para obtener el Id del contenedor de postgres
 
-### 6. Iniciar el Servidor
+```sh
+docker ps
+```
+
+Con este id usa el siguiente comando para obtener la dirección IP
+
+```sh
+docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' [container_id]
+```
+
+### 6. Inicializar la Base de Datos
+
+Conectandose a pgadmin que esta conectado <http://localhost:8080> le das a la opción de agregar un nuevo servidor y en el campo de host ingresas la ip obtenida en el paso anterior e ingresar los datos de usuario y contraseña establecidos en el docker compose para postgres
+
+### 7. Iniciar el Servidor
 
 Finalmente, puedes iniciar el servidor utilizando el siguiente comando:
 
 ```sh
 npm start
+```
+
+Inicialmente te debe aparecer en consola estos mensaje:
+
+```sh
+> backend_las_nubes_codeharbor@1.0.0 start
+> npx nodemon app.js
+
+[nodemon] 3.0.1
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,cjs,json
+[nodemon] starting `node app.js`
+Server on port 4000
+Database connection successful
 ```
 
 El servidor debería estar corriendo en <http://localhost:3000>

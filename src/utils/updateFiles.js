@@ -35,4 +35,8 @@ async function updateFiles(Files, currentInfo) {
 module.exports = {
   updateFiles,
   updateOneFile,
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> main

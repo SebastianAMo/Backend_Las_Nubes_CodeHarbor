@@ -1,16 +1,20 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 
-router.get('/perfil', (req, res) => {
-    res.send('Endpoint para acceder al perfil del usuario');
-});
+const {
+  getUsers,
+  getUserById,
+  updateUser,
+  disabledUser,
+  activeUser,
+  getInforme,
+} = require('../controllers/colaboradores.controller');
+const authenticate = require('../middlewares/auth');
 
-router.get('/citas-medicas', (req, res) => {
-    res.send('Endpoint para ver la información de citas médicas del médico autenticado');
-});
-
-router.get('/medicos-asignados', (req, res) => {
-    res.send('Endpoint para ver la información de los médicos asignados a la enfermera');
-});
+router.get('/', authenticate, getUsers);
+router.get('/:id', authenticate, getUserById);
+router.patch('/:id', authenticate, updateUser);
+router.delete('/:id', authenticate, disabledUser);
+router.patch('/activate/:id', authenticate, activeUser);
+router.get('/informe/:option', authenticate, getInforme);
 
 module.exports = router;
