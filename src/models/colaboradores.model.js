@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const createUser = async (userData) => {
   const { username, password, role } = userData;
   const estate = 'active';
-  const createdAt = new Date();
+  const createdAt = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
   const hashedPassword = await bcrypt.hash(password, 10);
   const result = await pool.query(
     'INSERT INTO users (username, password, role, estate, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, role, created_at, estate',
@@ -72,8 +72,10 @@ const getInformePacientes = async () => {
     // Consulta para contar pacientes en el hospital
     const pacientesEnHospital = await pool.query(
       `SELECT COUNT(DISTINCT id_paciente) AS pacientes_en_hospital
-             FROM entrada_pacientes
-             WHERE hora_entrada > CURRENT_DATE - INTERVAL '1 day';`
+      FROM citas_medicas
+      WHERE fecha = CURRENT_DATE
+        AND (estado = 'confirmada' OR estado = 'en cita');
+      `
     );
     // Consulta para contar citas en el mes actual
     const citasMesActual = await pool.query(
@@ -95,20 +97,22 @@ const getInformePacientes = async () => {
 
 const getInformesColaboradores = async () => {
   try {
-    // Cantidad de colaboradores por especialidad
-    const colaboradoresPorEspecialidad = await pool.query(
-      `SELECT especialidad, COUNT(*) AS cantidad
+    // Cantidad de colaboradores por jerarquia
+    const colaboradoresPorJerarquia = await pool.query(
+      `SELECT jerarquia, COUNT(*) AS cantidad
         FROM colaboradores
-        GROUP BY especialidad;`
+        GROUP BY jerarquia;`
     );
 
     // Número total de pacientes atendidos por todos los colaboradores en el mes actual
     // Suponiendo que esto se puede calcular a partir de las citas médicas
     const totalCitasMesActual = await pool.query(
-      `SELECT COUNT(DISTINCT id_paciente) AS pacientes_atendidos
-        FROM citas_medicas
-        WHERE EXTRACT(MONTH FROM fecha) = EXTRACT(MONTH FROM CURRENT_DATE)
-          AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE);`
+      `SELECT COUNT(*) AS total_citas_realizadas
+      FROM citas_medicas
+      WHERE estado = 'realizada'
+        AND EXTRACT(MONTH FROM fecha) = EXTRACT(MONTH FROM CURRENT_DATE)
+        AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE);
+      `
     );
 
     // Total de salario de todos los colaboradores
@@ -118,7 +122,7 @@ const getInformesColaboradores = async () => {
     );
 
     return {
-      colaboradoresPorEspecialidad: colaboradoresPorEspecialidad.rows,
+      colaboradoresPorjerarquia: colaboradoresPorJerarquia.rows,
       totalCitasMesActual: totalCitasMesActual.rows[0].pacientes_atendidos,
       totalSalarios: totalSalarios.rows[0].total_salarios,
     };
