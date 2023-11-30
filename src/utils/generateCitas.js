@@ -29,7 +29,7 @@ const getLastCita = async (numero_identificacion) => {
   if (result.rows.length > 0) {
     return result.rows[0].ultima_fecha_cita;
   } else {
-    let currentDate = new Date();
+    let currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
     currentDate.setDate(currentDate.getDate() + 1);
     return currentDate.toISOString().split('T')[0]; // Retorna la fecha en formato 'YYYY-MM-DD'
   }
@@ -37,7 +37,7 @@ const getLastCita = async (numero_identificacion) => {
 
 // Función para crear una nueva cita
 const createCita = async (citaData) => {
-  const estado = 'sin asignar';
+  const estado = 'Sin asignar';
   const result = await pool.query(
     `INSERT INTO citas_medicas (id_medico, id_enfermero, fecha, hora, estado) 
          VALUES ($1, $2, $3, $4, $5) RETURNING *`,
@@ -100,7 +100,7 @@ const asignarEnfermeraACita = async (fecha, hora, enfermeros) => {
 
 const programarCitasParaMedico = async (numero_identificacion, enfermeros) => {
   let ultimaFechaCita = await getLastCita(numero_identificacion);
-  let fechaCita = new Date(ultimaFechaCita < new Date() ? addDaysSkippingWeekends(new Date(), 1) : ultimaFechaCita);
+  let fechaCita = new Date(ultimaFechaCita < new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }) ? addDaysSkippingWeekends(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }), 1) : ultimaFechaCita);
   let diasFaltantes = 10;
 
   while (diasFaltantes > 0) {
@@ -133,7 +133,7 @@ const agregarCitasSiEsNecesario = async () => {
 // Function to change state of citas where colaborador with jerarquia Médico is deleted to 'cancelada'
 const deleteCitas = async () => {
   const result = await pool.query(
-    `UPDATE citas_medicas SET estado = 'cancelada' WHERE id_medico IN (SELECT numero_identificacion FROM colaboradores WHERE jerarquia = 'Médico' AND is_deleted = true) RETURNING *`
+    `UPDATE citas_medicas SET estado = 'Cancelada' WHERE id_medico IN (SELECT numero_identificacion FROM colaboradores WHERE jerarquia = 'Médico' AND is_deleted = true) RETURNING *`
   );
   return result.rows;
 };
