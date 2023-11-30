@@ -1,7 +1,7 @@
 const pool = require('../../config/dbConfig');
 
 const getCitasSinAsignar = async () => {
-  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
   
 
   const query = `
@@ -46,7 +46,7 @@ const getCitasPacienteActivas = async (numero_identificacion) => {
 };
 
 const getCitasByState = async (numero_identificacion, state) => {
-  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
   const result = await pool.query(
     `SELECT cm.*, 
               p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
@@ -87,8 +87,8 @@ const cancelCita = async (numero_identificacion) => {
 
 // Get citas with state 'Activa' and date = today
 const getCitasActivas = async () => {
-  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' }).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
-  console.log(currentDate); 
+  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+
   const result = await pool.query(
     `SELECT cm.*, 
               p.nombre AS nombre_paciente, p.apellido AS apellido_paciente, p.correo_electronico, p.telefono, p.tipo_identificacion,
@@ -96,7 +96,7 @@ const getCitasActivas = async () => {
        FROM citas_medicas cm
        LEFT JOIN pacientes p ON cm.id_paciente = p.numero_identificacion
        LEFT JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
-       WHERE cm.fecha = $1`,
+       WHERE cm.fecha = $1 AND cm.estado = 'Activa'` ,
     [currentDate]
   );
   return result.rows;

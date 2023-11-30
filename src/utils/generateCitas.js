@@ -1,4 +1,3 @@
-const { query } = require('express');
 const pool = require('../../config/dbConfig');
 
 // Función para obtener los números de identificación de todos los médicos
@@ -30,8 +29,8 @@ const getLastCita = async (numero_identificacion) => {
     return result.rows[0].ultima_fecha_cita;
   } else {
     let currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
-    currentDate.setDate(currentDate.getDate() + 1);
-    return currentDate.toISOString().split('T')[0]; // Retorna la fecha en formato 'YYYY-MM-DD'
+  
+    return currentDate; // Retorna la fecha en formato 'YYYY-MM-DD'
   }
 };
 

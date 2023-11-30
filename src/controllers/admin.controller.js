@@ -127,7 +127,6 @@ const updateColaborador = async (req, res) => {
 
     res.json(colaborador);
   } catch (err) {
-    console.log('Error en updateColaborador:', err);
     res.status(500).send(err.message);
   }
 };

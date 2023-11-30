@@ -80,7 +80,7 @@ const getInforme = async (req, res) => {
       titulo = 'Informe de pacientes';
     } else if (type == 2) {
       informe = await userModel.getInformesColaboradores();
-      console.log(informe);
+
       titulo = 'Informe de colaboradores';
     } else if (type == 3) {
       informe = await userModel.getInformesMedicamentos();
