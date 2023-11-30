@@ -173,6 +173,9 @@ ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_enfermero") REFERENCES "colabor
 ALTER TABLE "citas_medicas" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
 ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("id_paciente") REFERENCES "pacientes" ("numero_identificacion");
 ALTER TABLE "entrada_pacientes" ADD FOREIGN KEY ("secretario_id") REFERENCES "colaboradores" ("numero_identificacion");
+ALTER TABLE medicamentos_recetados
 
+ADD COLUMN estado VARCHAR(20) DEFAULT 'pendiente',
+ADD COLUMN motivo_rechazo TEXT;
 ALTER TABLE "colaboradores" ADD COLUMN "foto_url" VARCHAR;
 ALTER TABLE "pacientes" ADD COLUMN "foto_url" VARCHAR;
