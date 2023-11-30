@@ -64,6 +64,10 @@ const getPacienteByNumId = async (req, res) => {
         .status(404)
         .send('No existe un paciente con ese número de identificación.');
     }
+    if (paciente.foto_url) {
+      paciente.foto_url = `${req.protocol}://${req.get('host')}/${
+        paciente.foto_url
+      }`;}
     res.json(paciente);
   } catch (err) {
     res.status(500).send(err.message);
