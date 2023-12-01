@@ -16,17 +16,16 @@ const getEspecialidades = async () => {
 
 // Get citas medicos que tienen citas sin asignar de una especialidad en especifico
 const getCitasMedicos = async (especialidad) => {
-  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
-  const result = await pool.query(
-    `SELECT cm.id_cita, cm.fecha, cm.hora, c.nombre, c.apellido, c.especialidad, c.numero_identificacion
-      FROM citas_medicas cm
-      JOIN colaboradores c ON cm.id_medico = c.numero_identificacion
-      WHERE cm.estado = 'Sin asignar' AND c.jerarquia = 'Médico' AND cm.fecha > $1 AND c.especialidad = $2`,
-    [currentDate, especialidad]
-  );
-
-  return result.rows;
-};
+    const result = await pool.query(
+      `SELECT c.nombre, c.apellido, c.especialidad, c.numero_identificacion
+       FROM colaboradores c
+       WHERE c.jerarquia = 'Médico' AND c.especialidad = $1`,
+      [especialidad]
+    );
+  
+    return result.rows;
+  };
+  
 
 // Get citas de un medico en especifico que tienen citas sin asignar
 const getCitasMedico = async (id_medico) => {
