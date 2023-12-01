@@ -2,10 +2,10 @@
   "name": "backend_las_nubes_codeharbor",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "build:digitalocean": "npm install --production=false && npm run build && npm ci",
-    "start": "npx nodemon app.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
