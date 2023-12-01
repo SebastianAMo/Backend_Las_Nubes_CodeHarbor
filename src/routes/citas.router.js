@@ -3,6 +3,8 @@ const router = express.Router();
 const citasController = require('../controllers/citas.controller');
 const authenticate = require('../middlewares/auth');
 
+router.get('/fechas/:id_medico', citasController.getFechasDisponibles);
+router.get('/horas/:id_medico/:fecha', citasController.getHorasDisponibles);
 router.get('/especialidades', citasController.getEspecialidades);
 router.get('/medicos/:especialidad', citasController.getCitasMedicos);
 router.get('/medico/:id_medico', citasController.getCitasMedico);

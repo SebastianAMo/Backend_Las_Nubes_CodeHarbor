@@ -1,44 +1,56 @@
 const pool = require('../../config/dbConfig');
 
+let cacheMedicos = null;
+let cacheEnfermeros = null;
+
 // Función para obtener los números de identificación de todos los médicos
 const getMedicos = async () => {
-  const result = await pool.query(
-    "SELECT numero_identificacion FROM colaboradores WHERE jerarquia = 'Médico' and is_deleted = false"
-  );
-  return result.rows.map((row) => row.numero_identificacion);
+  if (!cacheMedicos) {
+    const result = await pool.query(
+      "SELECT numero_identificacion FROM colaboradores WHERE jerarquia = 'Médico' and is_deleted = false"
+    );
+    cacheMedicos = result.rows.map((row) => row.numero_identificacion);
+  }
+  return cacheMedicos;
 };
 
-// Función para obtener los número de identificación de los enfermeros
+// Función para obtener los números de identificación de los enfermeros
 const getEnfermeros = async () => {
-  const result = await pool.query(
-    "SELECT numero_identificacion FROM colaboradores WHERE jerarquia = 'Enfermero' and is_deleted = false"
-  );
-  return result.rows.map((row) => row.numero_identificacion);
+  if (!cacheEnfermeros) {
+    const result = await pool.query(
+      "SELECT numero_identificacion FROM colaboradores WHERE jerarquia = 'Enfermero' and is_deleted = false"
+    );
+    cacheEnfermeros = result.rows.map((row) => row.numero_identificacion);
+  }
+  return cacheEnfermeros;
 };
 
-// Función para obtener la última fecha de cita programada para un médico
 const getLastCita = async (numero_identificacion) => {
   const result = await pool.query(
-    `SELECT id_medico, MAX(fecha) as ultima_fecha_cita
-                                     FROM citas_medicas WHERE id_medico = $1 GROUP BY id_medico;`,
+    `SELECT MAX(fecha) as ultima_fecha_cita FROM citas_medicas WHERE id_medico = $1 GROUP BY id_medico;`,
     [numero_identificacion]
   );
-
-  if (result.rows.length > 0) {
-    return result.rows[0].ultima_fecha_cita;
-  } else {
-    let currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
   
-    return currentDate; // Retorna la fecha en formato 'YYYY-MM-DD'
+  let referenciaFecha = new Date();
+  if (result.rows.length > 0) {
+    const ultimaFechaCita = new Date(result.rows[0].ultima_fecha_cita);
+    if (ultimaFechaCita >= referenciaFecha) {
+      referenciaFecha = addDaysSkippingWeekends(referenciaFecha, 1);
+    } else {
+      referenciaFecha = addDaysSkippingWeekends(referenciaFecha, 10);
+    }
+  } else {
+    referenciaFecha = addDaysSkippingWeekends(referenciaFecha, 10);
   }
+
+  return referenciaFecha.toISOString().split('T')[0]; // Retorna la fecha en formato 'YYYY-MM-DD'
 };
 
-// Función para crear una nueva cita
 const createCita = async (citaData) => {
   const estado = 'Sin asignar';
-  const result = await pool.query(
+  await pool.query(
     `INSERT INTO citas_medicas (id_medico, id_enfermero, fecha, hora, estado) 
-         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+     VALUES ($1, $2, $3, $4, $5)`,
     [
       citaData.id_medico,
       citaData.id_enfermero,
@@ -47,7 +59,37 @@ const createCita = async (citaData) => {
       estado,
     ]
   );
-  return result.rows[0];
+};
+
+// Resto del código (addDaysSkippingWeekends, generarHorarios) permanece igual
+
+const programarCitasParaMedico = async (numero_identificacion, enfermeros) => {
+  let fechaInicio = await getLastCita(numero_identificacion);
+  let fechaLimite = addDaysSkippingWeekends(new Date(), 10);
+  let fechaCita = new Date(fechaInicio);
+
+  while (fechaCita < fechaLimite) {
+    if (fechaCita.getDay() !== 0) {
+      const horarios = generarHorarios();
+      for (const hora of horarios) {
+        const idEnfermeroAsignado = await asignarEnfermeraACita(
+          fechaCita.toISOString().split('T')[0],
+          hora,
+          enfermeros
+        );
+
+        if (idEnfermeroAsignado) {
+          await createCita({
+            id_medico: numero_identificacion,
+            id_enfermero: idEnfermeroAsignado,
+            fecha: fechaCita.toISOString().split('T')[0],
+            hora: hora,
+          });
+        }
+      }
+    }
+    fechaCita = addDaysSkippingWeekends(fechaCita, 1);
+  }
 };
 
 const addDaysSkippingWeekends = (startDate, daysToAdd) => {
@@ -99,44 +141,6 @@ const asignarEnfermeraACita = async (fecha, hora, enfermeros) => {
     }
   }
   return null;
-};
-
-const programarCitasParaMedico = async (numero_identificacion, enfermeros) => {
-  let ultimaFechaCita = await getLastCita(numero_identificacion);
-  let fechaCita = new Date(
-    ultimaFechaCita <
-    new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' })
-      ? addDaysSkippingWeekends(
-          new Date().toLocaleDateString('en-CA', {
-            timeZone: 'America/Bogota',
-          }),
-          1
-        )
-      : ultimaFechaCita
-  );
-  let diasFaltantes = 10;
-
-  while (diasFaltantes > 0) {
-    if (fechaCita.getDay() !== 0) {
-      // 0 es Domingo
-      const horarios = generarHorarios();
-      for (const hora of horarios) {
-        const idEnfermeroAsignado = await asignarEnfermeraACita(
-          fechaCita.toISOString().split('T')[0],
-          hora,
-          enfermeros
-        );
-        await createCita({
-          id_medico: numero_identificacion,
-          id_enfermero: idEnfermeroAsignado,
-          fecha: fechaCita.toISOString().split('T')[0],
-          hora: hora,
-        });
-      }
-      diasFaltantes--;
-    }
-    fechaCita = addDaysSkippingWeekends(fechaCita, 1);
-  }
 };
 
 const agregarCitasSiEsNecesario = async () => {

@@ -23,8 +23,8 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/api', async (req, res) => {
-  //await agregarCitasSiEsNecesario();
-  //await deleteCitas();
+  await agregarCitasSiEsNecesario();
+  await deleteCitas();
   res.send('Hello World!');
 });
 

@@ -1,5 +1,35 @@
 const citasModel = require('../models/citas.model');
 
+const getFechasDisponibles = async (req, res) => {
+  try {
+    const id_medico = req.params.id_medico;
+    const fechas = await citasModel.getFechasDisponibles(id_medico);
+    if (fechas.length === 0) {
+      res.json({ message: 'No hay fechas disponibles' }).status(404);
+      return;
+    }
+    res.json(fechas).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
+  }
+};
+
+const getHorasDisponibles = async (req, res) => {
+  try {
+    const id_medico = req.params.id_medico;
+    const fecha = req.params.fecha;
+    const horas = await citasModel.getHorasDisponibles(id_medico, fecha);
+    if (horas.length === 0) {
+      res.json({ message: 'No hay horas disponibles' }).status(404);
+      return;
+    }
+    res.json(horas).status(200);
+  } catch (error) {
+    res.json({ message: error.message }).status(500);
+  }
+};
+
+
 const getEspecialidades = async (req, res) => {
   try {
     const especialidades = await citasModel.getEspecialidades();
@@ -199,6 +229,8 @@ const updateCita = async (req, res) => {
 };
 
 module.exports = {
+  getFechasDisponibles,
+  getHorasDisponibles,
   getEspecialidades,
   getCitasMedicos,
   getCitasMedico,

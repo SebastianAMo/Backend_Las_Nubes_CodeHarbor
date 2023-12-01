@@ -1,5 +1,29 @@
 const pool = require('../../config/dbConfig');
 
+//Uno en el que el front envié el número de documento de un medico, y el back envié una lista con SOLO LAS FECHAS en las cuales tiene citas disponibles sin repetirse
+const getFechasDisponibles = async (id_medico) => {
+  const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+  const result = await pool.query(
+    `SELECT DISTINCT fecha
+      FROM citas_medicas
+      WHERE id_medico = $1 AND estado = 'Sin asignar' AND fecha > $2 ORDER BY fecha ASC`,
+    [id_medico, currentDate]
+  );
+  return result.rows;
+};
+
+//Uno en el que el front envié el número de documento de un medico, y el back envié una lista con SOLO LAS HORAS en las cuales tiene citas disponibles sin repetirse
+const getHorasDisponibles = async (id_medico, fecha) => {
+  const result = await pool.query(
+    `SELECT DISTINCT hora
+      FROM citas_medicas
+      WHERE id_medico = $1 AND estado = 'Sin asignar' AND fecha = $2 ORDER BY hora ASC`,
+    [id_medico, fecha]
+  );
+  return result.rows;
+};
+
+
 // Get especialidades de los medicos que tienen citas sin asignar
 const getEspecialidades = async () => {
   const currentDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
@@ -159,6 +183,8 @@ const updateCita = async (id_cita, updateFields) => {
 };
 
 module.exports = {
+  getFechasDisponibles,
+  getHorasDisponibles,
   getEspecialidades,
   getCitasMedicos,
   getCitasMedico,
