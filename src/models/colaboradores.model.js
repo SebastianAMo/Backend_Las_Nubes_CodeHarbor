@@ -84,7 +84,7 @@ const getInformePacientes = async () => {
       `SELECT COUNT(*) AS citas_mes_actual
              FROM citas_medicas
              WHERE EXTRACT(MONTH FROM fecha) = EXTRACT(MONTH FROM CURRENT_DATE)
-               AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE) AND (estado = 'Confirmada' OR estado = 'En cita');`
+               AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE) AND estado = 'Realizada';`
     );
     return {
       totalPacientesActivos: pacientesActivos.rows[0].total_pacientes_activos,
