@@ -13,7 +13,7 @@ const getFechasDisponibles = async (id_medico) => {
 
 const getHorasDisponibles = async (id_medico, fecha) => {
   const result = await pool.query(
-    `SELECT DISTINCT hora
+    `SELECT DISTINCT hora, id_cita
       FROM citas_medicas
       WHERE id_medico = $1 AND estado = 'Sin asignar' AND fecha = $2 ORDER BY hora ASC`,
     [id_medico, fecha]
