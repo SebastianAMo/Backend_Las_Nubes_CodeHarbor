@@ -76,7 +76,7 @@ const getInformePacientes = async () => {
       `SELECT COUNT(DISTINCT id_paciente) AS pacientes_en_hospital
       FROM citas_medicas
       WHERE fecha = CURRENT_DATE
-        AND (estado = 'confirmada' OR estado = 'en cita');
+        AND (estado = 'Confirmada' OR estado = 'En cita');
       `
     );
     // Consulta para contar citas en el mes actual
@@ -84,7 +84,7 @@ const getInformePacientes = async () => {
       `SELECT COUNT(*) AS citas_mes_actual
              FROM citas_medicas
              WHERE EXTRACT(MONTH FROM fecha) = EXTRACT(MONTH FROM CURRENT_DATE)
-               AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE);`
+               AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE) AND (estado = 'Confirmada' OR estado = 'En cita');`
     );
     return {
       totalPacientesActivos: pacientesActivos.rows[0].total_pacientes_activos,
@@ -111,7 +111,7 @@ const getInformesColaboradores = async () => {
     const totalCitasMesActual = await pool.query(
       `SELECT COUNT(*) AS total_citas_realizadas
       FROM citas_medicas
-      WHERE estado = 'realizada'
+      WHERE estado = 'Realizada'
         AND EXTRACT(MONTH FROM fecha) = EXTRACT(MONTH FROM CURRENT_DATE)
         AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE);
       `
